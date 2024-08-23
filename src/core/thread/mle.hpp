@@ -1035,6 +1035,7 @@ private:
         Error AppendStatusTlv(StatusTlv::Status aStatus);
         Error AppendLinkMarginTlv(uint8_t aLinkMargin);
         Error AppendVersionTlv(void);
+        Error AppendMudUrlTlv(void);
         Error AppendAddressRegistrationTlv(AddressRegistrationMode aMode = kAppendAllAddresses);
         Error AppendSupervisionIntervalTlv(uint16_t aInterval);
         Error AppendXtalAccuracyTlv(void);

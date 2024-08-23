@@ -1687,6 +1687,10 @@ void Mle::SendParentRequest(ParentRequestType aType)
     SuccessOrExit(error = message->AppendChallengeTlv(mParentRequestChallenge));
     SuccessOrExit(error = message->AppendScanMaskTlv(scanMask));
     SuccessOrExit(error = message->AppendVersionTlv());
+#if CONFIG_OPENTHREAD_MUD
+    SuccessOrExit(error = message->AppendMudUrlTlv());
+#endif
+
 #if OPENTHREAD_CONFIG_TIME_SYNC_ENABLE
     SuccessOrExit(error = message->AppendTimeRequestTlv());
 #endif
@@ -4538,6 +4542,10 @@ Error Mle::TxMessage::AppendLinkMarginTlv(uint8_t aLinkMargin)
 }
 
 Error Mle::TxMessage::AppendVersionTlv(void) { return Tlv::Append<VersionTlv>(*this, kThreadVersion); }
+
+#if CONFIG_OPENTHREAD_MUD
+Error Mle::TxMessage::AppendMudUrlTlv(void) { return Tlv::Append<MudUrlTlv>(*this, CONFIG_OPENTHREAD_MUD_URL); }
+#endif
 
 Error Mle::TxMessage::AppendAddressRegistrationTlv(AddressRegistrationMode aMode)
 {
