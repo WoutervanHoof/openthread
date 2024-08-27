@@ -60,8 +60,8 @@ install_packages_apt()
 
     echo 'Installing GNU Arm Embedded Toolchain...'
 
-    PLATFORM=$(lsb_release -is)
-    ARCH=$(arch)
+        PLATFORM=$(lsb_release -is)
+        ARCH=$(arch)
 
     if [ "$PLATFORM" = "Raspbian" ]; then
         sudo apt-get --no-install-recommends install -y binutils-arm-none-eabi gcc-arm-none-eabi gdb-arm-none-eabi libnewlib-arm-none-eabi libstdc++-arm-none-eabi-newlib
@@ -86,7 +86,25 @@ install_packages_opkg()
 
 install_packages_rpm()
 {
-    echo 'rpm not supported currently' && false
+    echo 'Installing toolchain dependencies...'
+
+    # apt-get update and install dependencies
+    sudo dnf upgrade
+    sudo dnf install --setopt=install_weak_deps=False -y g++ lsb-release cmake ninja-build shellcheck
+
+    echo 'Installing GNU Arm Embedded Toolchain...'
+
+    PLATFORM=$(lsb_release -is)
+    ARCH=$(arch)
+
+    if [ "$PLATFORM" = "Fedora" ]; then 
+        sudo dnf install --setopt=install_weak_deps=False -y bzip2 ca-certificates wget
+        (cd /tmp \
+            && wget --tries 4 --no-check-certificate --quiet -c https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2020q2/gcc-arm-none-eabi-9-2020-q2-update-"$ARCH"-linux.tar.bz2 \
+            && sudo tar xjf gcc-arm-none-eabi-9-2020-q2-update-"$ARCH"-linux.tar.bz2 -C /opt \
+            && rm gcc-arm-none-eabi-9-2020-q2-update-"$ARCH"-linux.tar.bz2 \
+            && sudo ln -s -f /opt/gcc-arm-none-eabi-9-2020-q2-update/bin/* /usr/local/bin/.)
+    fi
 }
 
 install_packages_brew()
