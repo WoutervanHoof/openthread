@@ -256,6 +256,9 @@ ot_option(OT_UDP_FORWARD OPENTHREAD_CONFIG_UDP_FORWARD_ENABLE "UDP forward")
 ot_option(OT_UPTIME OPENTHREAD_CONFIG_UPTIME_ENABLE "uptime")
 ot_option(OT_VERHOEFF_CHECKSUM OPENTHREAD_CONFIG_VERHOEFF_CHECKSUM_ENABLE "verhoeff checksum")
 
+ot_option(OT_MUDTHREAD CONFIG_OPENTHREAD_MUD "Enables MUDthread, adds MUD URL to MLE Parent request")
+ot_string_option(OT_MUD_URL CONFIG_OPENTHREAD_MUD_URL "Specifies MUD URL")
+
 option(OT_DOC "build OpenThread documentation")
 message(STATUS "- - - - - - - - - - - - - - - - ")
 
