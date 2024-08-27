@@ -69,6 +69,13 @@ const otMeshLocalPrefix Mle::kMeshLocalPrefixInit = {
     {0xfd, 0xde, 0xad, 0x00, 0xbe, 0xef, 0x00, 0x00},
 };
 
+#if CONFIG_OPENTHREAD_MUD
+#ifndef CONFIG_OPENTHREAD_MUD_URL
+#define CONFIG_OPENTHREAD_MUD_URL "https://test.nl/mud"
+#endif
+static const char* mud_url = CONFIG_OPENTHREAD_MUD_URL;
+#endif
+
 Mle::Mle(Instance &aInstance)
     : InstanceLocator(aInstance)
     , mRetrieveNewNetworkData(false)
@@ -4544,7 +4551,7 @@ Error Mle::TxMessage::AppendLinkMarginTlv(uint8_t aLinkMargin)
 Error Mle::TxMessage::AppendVersionTlv(void) { return Tlv::Append<VersionTlv>(*this, kThreadVersion); }
 
 #if CONFIG_OPENTHREAD_MUD
-Error Mle::TxMessage::AppendMudUrlTlv(void) { return Tlv::Append<MudUrlTlv>(*this, CONFIG_OPENTHREAD_MUD_URL); }
+Error Mle::TxMessage::AppendMudUrlTlv(void) { return Tlv::Append<MudUrlTlv>(*this, mud_url); }
 #endif
 
 Error Mle::TxMessage::AppendAddressRegistrationTlv(AddressRegistrationMode aMode)
