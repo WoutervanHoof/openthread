@@ -2,6 +2,16 @@
 
 ---
 
+This repository is a fork of [OpenThread](https://github.com/openthread/openthread). The main goal is to add to a Thread device the ability to store a MUD URL and forward it to the necessary entities in the network. For now, it only has incorporated the ideas of [MudThread](https://github.com/LukeHouben/ot-mudthread) into a standalone fork of Openthread. This allows me to simply incorporate this repository into other projects as a git submodule. (I.e., my fork of [nrf528xx](https://github.com/WoutervanHoof/ot-nrf528xx)) and my to do Zephyr/MUDThread integration.
+
+## Additions
+The following to options are added as CMAKE configuration options, to be used in the standard openthread build script:
+
+```
+-DOT_MUDTHREAD=ON
+-DOT_MUD_URL="https://url.to.mud/file"
+```
+
 # What is OpenThread?
 
 OpenThread released by Google is... <a href="https://www.threadgroup.org/What-is-Thread/Thread-Benefits#certifiedproducts"> <img src="https://cdn.rawgit.com/openthread/openthread/ab4c4e1e/doc/images/certified.svg" alt="Thread Certified Component" width="150px" align="right"> </a>
