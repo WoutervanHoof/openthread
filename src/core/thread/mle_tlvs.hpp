@@ -101,6 +101,7 @@ public:
         kPendingDataset        = 25, ///< Pending Operational Dataset TLV
         kDiscovery             = 26, ///< Thread Discovery TLV
         kSupervisionInterval   = 27, ///< Supervision Interval TLV
+        kMudUrl                = 28, ///< MUD URL TLV
         kCslChannel            = 80, ///< CSL Channel TLV
         kCslTimeout            = 85, ///< CSL Timeout TLV
         kCslClockAccuracy      = 86, ///< CSL Clock Accuracy TLV
@@ -120,6 +121,8 @@ public:
 
         kInvalid = 255,
     };
+
+    static constexpr u_int8_t kMaxMudUrlLength  = 40; ///< Max length of MUD URL TLV.
 
     /**
      * Returns the Type value.
@@ -210,6 +213,12 @@ typedef UintTlvInfo<Tlv::kLinkMargin, uint8_t> LinkMarginTlv;
  *
  */
 typedef UintTlvInfo<Tlv::kVersion, uint16_t> VersionTlv;
+
+/**
+ * This class defines MUD URL TLV constants and types.
+ *
+ */
+typedef StringTlvInfo<Tlv::kMudUrl, Tlv::kMaxMudUrlLength> MudUrlTlv;
 
 /**
  * Defines PAN ID TLV constants and types.
