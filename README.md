@@ -2,15 +2,17 @@
 
 ---
 
-This repository is a fork of [OpenThread](https://github.com/openthread/openthread). The main goal is to add to a Thread device the ability to store a MUD URL and forward it to the necessary entities in the network. For now, it only has incorporated the ideas of [MudThread](https://github.com/LukeHouben/ot-mudthread) into a standalone fork of Openthread. This allows me to simply incorporate this repository into other projects as a git submodule. (I.e., my fork of [nrf528xx](https://github.com/WoutervanHoof/ot-nrf528xx)) and my to do Zephyr/MUDThread integration.
+This repository is a fork of [OpenThread](https://github.com/openthread/openthread). The main goal is to add to a Thread device the ability to store a MUD URL and forward it to the necessary entities in the network. For now, it only has incorporated the ideas of the openthread/src directory of [MudThread](https://github.com/LukeHouben/ot-mudthread) into a standalone fork of Openthread. This allows me to simply incorporate this repository into other projects as a git submodule. (I.e., my fork of [nrf528xx](https://github.com/WoutervanHoof/ot-nrf528xx)) and of [ot-br-posix](https://github.com/WoutervanHoof/ot-br-posix).
 
 ## Additions
-The following to options are added as CMAKE configuration options, to be used in the standard openthread build script:
+The following to options are added as CMAKE configuration options, to be used in the standard openthread build script (normaly, this build script is not executed from this repository, but in a wrapping repository porting openthread to a specific device, such as [nrf528xx](https://github.com/WoutervanHoof/ot-nrf528xx)):
 
 ```
 -DOT_MUDTHREAD=ON
 -DOT_MUD_URL="https://url.to.mud/file"
 ```
+
+By setting these options, the provided MUD URL will be included in the MLE parent request message. As this message is not guaranteed to reach a border router as was intended in MUDThread, the underlying functionality will change, but for now this is only an attempt at reproducing the results of MUDThread.
 
 # What is OpenThread?
 
