@@ -1694,9 +1694,6 @@ void Mle::SendParentRequest(ParentRequestType aType)
     SuccessOrExit(error = message->AppendChallengeTlv(mParentRequestChallenge));
     SuccessOrExit(error = message->AppendScanMaskTlv(scanMask));
     SuccessOrExit(error = message->AppendVersionTlv());
-#if CONFIG_OPENTHREAD_MUD
-    SuccessOrExit(error = message->AppendMudUrlTlv());
-#endif
 
 #if OPENTHREAD_CONFIG_TIME_SYNC_ENABLE
     SuccessOrExit(error = message->AppendTimeRequestTlv());
@@ -1788,6 +1785,10 @@ Error Mle::SendChildIdRequest(void)
     SuccessOrExit(error = message->AppendTimeoutTlv(mTimeout));
     SuccessOrExit(error = message->AppendVersionTlv());
     SuccessOrExit(error = message->AppendSupervisionIntervalTlv(Get<SupervisionListener>().GetInterval()));
+
+#if CONFIG_OPENTHREAD_MUD
+    SuccessOrExit(error = message->AppendMudUrlTlv());
+#endif
 
     if (!IsFullThreadDevice())
     {

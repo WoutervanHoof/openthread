@@ -2003,6 +2003,9 @@ void MleRouter::HandleChildIdRequest(RxInfo &aRxInfo)
     Child             *child;
     Router            *router;
     uint16_t           supervisionInterval;
+#if CONFIG_OPENTHREAD_MUD
+    char                mudUrl[Tlv::kMaxMudUrlLength + 1];
+#endif
 
     Log(kMessageReceive, kTypeChildIdRequest, aRxInfo.mMessageInfo.GetPeerAddr());
 
@@ -2138,6 +2141,13 @@ void MleRouter::HandleChildIdRequest(RxInfo &aRxInfo)
 
     case kRoleRouter:
     case kRoleLeader:
+    #if CONFIG_OPENTHREAD_MUD
+        if (Tlv::Find<MudUrlTlv>(aRxInfo.mMessage, mudUrl) == kErrorNone) {
+            LogInfo("MUD URL %s Included in MLE Child ID Request from peer %s", mudUrl, extAddr.ToString().AsCString());
+        } else {
+            LogInfo("MUD URL not found in MLE Cild ID Request from peer %s", extAddr.ToString().AsCString());
+        }
+    #endif
         SuccessOrExit(error = SendChildIdResponse(*child));
         break;
 
