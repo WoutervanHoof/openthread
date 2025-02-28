@@ -2143,9 +2143,7 @@ void MleRouter::HandleChildIdRequest(RxInfo &aRxInfo)
     case kRoleLeader:
     #if CONFIG_OPENTHREAD_MUD
         if (Tlv::Find<MudUrlTlv>(aRxInfo.mMessage, mudUrl) == kErrorNone) {
-            LogInfo("MUD URL Included in MLE Child ID Request with length: %d from peer %s", strlen(mudUrl), extAddr);
-            
-            
+            LogInfo("MUD URL %s Included in MLE Child ID Request from peer %s", mudUrl, extAddr.ToString());
         } else {
             LogInfo("MUD URL not found in MLE Cild ID Request from peer %s", extAddr);
         }
