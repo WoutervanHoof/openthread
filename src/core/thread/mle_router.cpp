@@ -54,7 +54,6 @@
 #include "thread/uri_paths.hpp"
 #include "thread/version.hpp"
 #include "utils/otns.hpp"
-#include "core/net/"
 
 namespace ot {
 namespace Mle {
