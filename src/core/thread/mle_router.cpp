@@ -2145,7 +2145,7 @@ void MleRouter::HandleChildIdRequest(RxInfo &aRxInfo)
         if (Tlv::Find<MudUrlTlv>(aRxInfo.mMessage, mudUrl) == kErrorNone) {
             LogInfo("MUD URL %s Included in MLE Child ID Request from peer %s", mudUrl, extAddr.ToString().AsCString());
         } else {
-            LogInfo("MUD URL not found in MLE Cild ID Request from peer %s", extAddr);
+            LogInfo("MUD URL not found in MLE Cild ID Request from peer %s", extAddr.ToString().AsCString());
         }
     #endif
         SuccessOrExit(error = SendChildIdResponse(*child));
