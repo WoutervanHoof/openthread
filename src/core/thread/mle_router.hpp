@@ -679,6 +679,10 @@ private:
     void        HandleAdvertiseTrickleTimer(void);
     void        HandleTimeTick(void);
 
+#if CONFIG_OPENTHREAD_MUD
+    Error ProcessMUDUrl(char [Tlv::kMaxMudUrlLength + 1] MUDUrl, const Child &newChild);
+#endif
+
     TrickleTimer mAdvertiseTrickleTimer;
 
 #if OPENTHREAD_CONFIG_MLE_DEVICE_PROPERTY_LEADER_WEIGHT_ENABLE
