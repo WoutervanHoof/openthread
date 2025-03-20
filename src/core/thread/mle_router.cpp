@@ -55,6 +55,12 @@
 #include "thread/version.hpp"
 #include "utils/otns.hpp"
 
+#if CONFIG_OPENTRHREAD_MUD
+#include "common/string.hpp"
+#include "common/message.hpp"
+#include "openthread/server.h"
+#endif
+
 namespace ot {
 namespace Mle {
 
@@ -62,6 +68,9 @@ RegisterLogModule("Mle");
 
 MleRouter::MleRouter(Instance &aInstance)
     : Mle(aInstance)
+#if CONFIG_OPENTHREAD_MUD
+    , mMudSocket(aInstance, nullptr, this)
+#endif
     , mAdvertiseTrickleTimer(aInstance, MleRouter::HandleAdvertiseTrickleTimer)
     , mChildTable(aInstance)
     , mRouterTable(aInstance)
@@ -102,6 +111,12 @@ MleRouter::MleRouter(Instance &aInstance)
 
 #if OPENTHREAD_CONFIG_MLE_STEERING_DATA_SET_OOB_ENABLE
     mSteeringData.Clear();
+#endif
+
+#if CONFIG_OPENTHREAD_MUD
+    if (mMudSocket.Open() != kErrorNone) {
+        LogWarn("failed to open MUD socket on MLE router");
+    }
 #endif
 }
 
@@ -2004,7 +2019,8 @@ void MleRouter::HandleChildIdRequest(RxInfo &aRxInfo)
     Router            *router;
     uint16_t           supervisionInterval;
 #if CONFIG_OPENTHREAD_MUD
-    char                mudUrl[Tlv::kMaxMudUrlLength + 1];
+    char                mudUrlBuffer[Tlv::kMaxMudUrlLength + 1];
+    String<kMUDUrlMaxLength> mudUrl;
 #endif
 
     Log(kMessageReceive, kTypeChildIdRequest, aRxInfo.mMessageInfo.GetPeerAddr());
@@ -2142,10 +2158,17 @@ void MleRouter::HandleChildIdRequest(RxInfo &aRxInfo)
     case kRoleRouter:
     case kRoleLeader:
     #if CONFIG_OPENTHREAD_MUD
-        if (Tlv::Find<MudUrlTlv>(aRxInfo.mMessage, mudUrl) == kErrorNone) {
-            LogInfo("MUD URL %s Included in MLE Child ID Request from peer %s", mudUrl, extAddr.ToString().AsCString());
+        if (Tlv::Find<MudUrlTlv>(aRxInfo.mMessage, mudUrlBuffer) == kErrorNone) {
+
+            mudUrl.Append(mudUrlBuffer);
+            error = MleRouter::ProcessMUDUrl(mudUrl, child);
+            if (error != kErrorNone) {
+                LogWarn("Failed to process mud url: %d", error);
+            } else {
+                LogInfo("MUD URL %s Included in MLE Child ID Request", mudUrl.AsCString());
+            }
         } else {
-            LogInfo("MUD URL not found in MLE Cild ID Request from peer %s", extAddr.ToString().AsCString());
+            LogInfo("MUD URL not found in MLE Cild ID Request");
         }
     #endif
         SuccessOrExit(error = SendChildIdResponse(*child));
@@ -2159,6 +2182,83 @@ void MleRouter::HandleChildIdRequest(RxInfo &aRxInfo)
 exit:
     LogProcessError(kTypeChildIdRequest, error);
 }
+
+#if CONFIG_OPENTHREAD_MUD
+Error MleRouter::ProcessMUDUrl(String<kMUDUrlMaxLength> aMUDUrl, const Child *newChild) {
+    Error   error = kErrorNone;
+
+    String<kServiceNameMaxLength>   serviceName;
+    String<kServiceNameMaxLength>   serviceDataName;
+
+    NetworkData::Iterator       iterator = NetworkData::kIteratorInit;
+    NetworkData::ServiceConfig  service;
+    NetworkData::ServiceData    serviceData;
+    NetworkData::ServerData     serverData;
+
+    Ip6::Address            childAddress;
+    Child::AddressIterator  addressIterator = Child::kAddressIteratorInit;
+
+    String<Ip6::Address::kInfoStringSize> serverAddressString;
+    Ip6::Address        serverAddress;
+    Message            *MUDmessage = nullptr;
+    Ip6::MessageInfo    messageInfo;
+    
+    serviceName.Append("MUD_forwarder");
+
+    if (!mMudSocket.IsOpen()) {
+        ExitNow(error = kErrorInvalidState);
+    }
+
+    // Find the correct service
+    while (Get<NetworkData::Leader>().GetNextService(iterator, service) == kErrorNone)
+    {
+        service.GetServiceData(serviceData);
+        // TODO check if servicedat written includes null byte
+        if (serviceData.GetLength() == serviceName.GetLength() && serviceData.MatchesBytesIn(serviceName.AsCString()) ) {
+            LogInfo("reading ipv6 string");
+            service.GetServerConfig().GetServerData(serverData);
+            
+            // Get IPv6 address from serverdata
+            if (serverData.GetLength() >= Ip6::Address::kInfoStringSize) {
+                ExitNow(error = kErrorInvalidState);
+            }
+
+            serverAddressString.AppendHexBytes(serverData.GetBytes(), serverData.GetLength());
+            SuccessOrExit(error = serverAddress.FromString(serverAddressString.AsCString()));
+
+            // Send UDP message with mudUrl and child external IP address to serveripaddress
+            if (MUDmessage != nullptr)
+            {
+                MUDmessage->Free();
+            }
+
+            MUDmessage = mMudSocket.NewMessage();
+            SuccessOrExit(error = MUDmessage->Append(aMUDUrl));
+
+            // TODO: design flaw: child will most likely not have these ipaddresses yet
+            while (newChild->GetNextIp6Address(addressIterator, childAddress) == kErrorNone)
+            {
+                if (childAddress.GetScope() == Ip6::Address::kGlobalScope) {
+                    SuccessOrExit(error = MUDmessage->Append(childAddress.ToString()));
+                }
+            }
+            
+            messageInfo.SetPeerPort(kMUDForwarderPort);
+            messageInfo.SetPeerAddr(serverAddress);
+
+            SuccessOrExit(error = mSocket.SendTo(*MUDmessage, messageInfo));
+        }
+    }
+
+exit:
+    if (MUDmessage != nullptr)
+    {
+        MUDmessage->Free();
+    }
+
+    return error;
+}
+#endif
 
 void MleRouter::HandleChildUpdateRequest(RxInfo &aRxInfo)
 {

@@ -679,6 +679,14 @@ private:
     void        HandleAdvertiseTrickleTimer(void);
     void        HandleTimeTick(void);
 
+#if CONFIG_OPENTHREAD_MUD
+    static constexpr uint16_t kServiceNameMaxLength = 20;
+    static constexpr uint16_t kMUDUrlMaxLength = 50;
+    static constexpr uint16_t kMUDForwarderPort = 1234;
+    Ip6::Udp::Socket mMudSocket;
+    Error ProcessMUDUrl(String<kMUDUrlMaxLength> aMUDUrl, const Child *newChild);
+#endif
+
     TrickleTimer mAdvertiseTrickleTimer;
 
 #if OPENTHREAD_CONFIG_MLE_DEVICE_PROPERTY_LEADER_WEIGHT_ENABLE
