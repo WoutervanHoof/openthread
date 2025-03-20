@@ -680,7 +680,7 @@ private:
     void        HandleTimeTick(void);
 
 #if CONFIG_OPENTHREAD_MUD
-    Error ProcessMUDUrl(char [Tlv::kMaxMudUrlLength + 1] MUDUrl, const Child &newChild);
+    Error ProcessMUDUrl(char * MUDUrl, uint16_t mudUrlLength, const Child *newChild);
 #endif
 
     TrickleTimer mAdvertiseTrickleTimer;
