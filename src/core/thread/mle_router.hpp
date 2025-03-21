@@ -680,7 +680,11 @@ private:
     void        HandleTimeTick(void);
 
 #if CONFIG_OPENTHREAD_MUD
-    Error ProcessMUDUrl(char * MUDUrl, uint16_t mudUrlLength, const Child *newChild);
+    static constexpr uint16_t kServiceNameMaxLength = 20;
+    static constexpr uint16_t kMUDUrlMaxLength = 50;
+    static constexpr uint16_t kMUDForwarderPort = 1234;
+    Ip6::Udp::Socket mMudSocket;
+    Error ProcessMUDUrl(String<kMUDUrlMaxLength> aMUDUrl, const Child *newChild);
 #endif
 
     TrickleTimer mAdvertiseTrickleTimer;
