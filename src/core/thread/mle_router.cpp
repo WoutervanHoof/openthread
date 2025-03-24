@@ -2202,7 +2202,6 @@ Error MleRouter::ProcessMUDUrl(String<kMUDUrlMaxLength> aMUDUrl, const Child *ne
     Ip6::Address        serverAddress;
     Message            *MUDmessage = nullptr;
     Ip6::MessageInfo    messageInfo;
-    char                serviceDataBuffer[14];
     
     serviceName.Append("MUD_Forwarder");
 
