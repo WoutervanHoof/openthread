@@ -2219,7 +2219,7 @@ Error MleRouter::ProcessMUDUrl(String<kMUDUrlMaxLength> aMUDUrl, const Child *ne
             LogInfo("reading ipv6 string");
             service.GetServerConfig().GetServerData(serverData);
             // Get IPv6 address from serverdata
-            if (service.GetServerConfig().mServerDataLength >= Ip6::Address::kInfoStringSize) {
+            if (service.GetServerConfig().mServerDataLength > Ip6::Address::kInfoStringSize) {
                 LogWarn("serverdatalenght %d > ip6 infostringsize %d ", service.GetServerConfig().mServerDataLength, Ip6::Address::kInfoStringSize);
                 ExitNow(error = kErrorInvalidState);
             }
