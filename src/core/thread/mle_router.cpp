@@ -2201,7 +2201,7 @@ Error MleRouter::ProcessMUDUrl(String<kMUDUrlMaxLength> aMUDUrl, const Child *ne
     String<Ip6::Address::kInfoStringSize> serverAddressString;
     Ip6::Address        serverAddress;
     Message            *MUDmessage = nullptr;
-    Message::Settings   messageSettings = Message::Settings(Message::Priority::kPriorityNormal);
+    // Message::Settings   messageSettings = Message::Settings(Message::Priority::kPriorityNormal);
     Ip6::MessageInfo    messageInfo;
     
     serviceName.Append("MUD_forwarder");
@@ -2231,7 +2231,7 @@ Error MleRouter::ProcessMUDUrl(String<kMUDUrlMaxLength> aMUDUrl, const Child *ne
 
     // Send UDP message with mudUrl and child external IP address to serveripaddress
     MUDmessage = mMudSocket.NewMessage();
-    SuccessOrExit(error = MUDmessage->Append(aMUDUrl.AsCString()));
+    SuccessOrExit(error = MUDmessage->Append(aMUDUrl));
 
     // TODO: design flaw: child will most likely not have these ipaddresses yet
     while (newChild->GetNextIp6Address(addressIterator, childAddress) == kErrorNone)
