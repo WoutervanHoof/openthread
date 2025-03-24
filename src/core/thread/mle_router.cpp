@@ -71,6 +71,9 @@ MleRouter::MleRouter(Instance &aInstance)
     , mAdvertiseTrickleTimer(aInstance, MleRouter::HandleAdvertiseTrickleTimer)
     , mChildTable(aInstance)
     , mRouterTable(aInstance)
+#if CONFIG_OPENTHREAD_MUD
+    , mMudSocket(aInstance, nullptr, this)
+#endif
     , mChallengeTimeout(0)
     , mNextChildId(kMaxChildId)
     , mNetworkIdTimeout(kNetworkIdTimeout)
@@ -80,9 +83,6 @@ MleRouter::MleRouter(Instance &aInstance)
     , mPreferredLeaderPartitionId(0)
     , mCcmEnabled(false)
     , mThreadVersionCheckEnabled(true)
-#endif
-#if CONFIG_OPENTHREAD_MUD
-    , mMudSocket(aInstance, nullptr, this)
 #endif
     , mRouterEligible(true)
     , mAddressSolicitPending(false)
