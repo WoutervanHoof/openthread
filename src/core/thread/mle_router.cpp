@@ -2215,8 +2215,8 @@ Error MleRouter::ProcessMUDUrl(String<kMUDUrlMaxLength> aMUDUrl, const Child *ne
     {
         service.GetServiceData(serviceData);
         // TODO check if servicedat written includes null byte
-        LogInfo("Read servicedata with length %d, expecting length %d", serverData.GetLength(), serviceName.GetLength());
-        if (serviceData.GetLength() == serviceName.GetLength() && serviceData.MatchesBytesIn(serviceName.AsCString()) ) {
+        LogInfo("Read servicedata with length %d, expecting length %d", service.mServiceDataLength, serviceName.GetLength() + 1);
+        if (service.mServiceDataLength == serviceName.GetLength() + 1 && serviceData.MatchesBytesIn(serviceName.AsCString()) ) {
             LogInfo("reading ipv6 string");
             service.GetServerConfig().GetServerData(serverData);
             // Get IPv6 address from serverdata
