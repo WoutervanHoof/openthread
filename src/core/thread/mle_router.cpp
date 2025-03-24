@@ -2203,7 +2203,7 @@ Error MleRouter::ProcessMUDUrl(String<kMUDUrlMaxLength> aMUDUrl, const Child *ne
     Message            *MUDmessage = nullptr;
     Ip6::MessageInfo    messageInfo;
     
-    serviceName.Append("MUD_forwarder");
+    serviceName.Append("MUD_Forwarder");
 
     if (!mMudSocket.IsOpen()) {
         ExitNow(error = kErrorInvalidState);
@@ -2215,7 +2215,6 @@ Error MleRouter::ProcessMUDUrl(String<kMUDUrlMaxLength> aMUDUrl, const Child *ne
     {
         service.GetServiceData(serviceData);
         // TODO check if servicedat written includes null byte
-        LogInfo("Read servicedata with length %d, expecting length %d", service.mServiceDataLength, serviceName.GetLength() + 1);
         if (service.mServiceDataLength == serviceName.GetLength() + 1 && serviceData.MatchesBytesIn(serviceName.AsCString()) ) {
             LogInfo("reading ipv6 string");
             service.GetServerConfig().GetServerData(serverData);
