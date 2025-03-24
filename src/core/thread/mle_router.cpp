@@ -2209,15 +2209,16 @@ Error MleRouter::ProcessMUDUrl(String<kMUDUrlMaxLength> aMUDUrl, const Child *ne
         ExitNow(error = kErrorInvalidState);
     }
 
+    LogInfo("looping over services");
     // Find the correct service
     while (Get<NetworkData::Leader>().GetNextService(iterator, service) == kErrorNone)
     {
         service.GetServiceData(serviceData);
         // TODO check if servicedat written includes null byte
+        LogInfo("Read servicedata with length %d, expecting length %d", serverData.GetLength(), serviceName.GetLength());
         if (serviceData.GetLength() == serviceName.GetLength() && serviceData.MatchesBytesIn(serviceName.AsCString()) ) {
             LogInfo("reading ipv6 string");
             service.GetServerConfig().GetServerData(serverData);
-            
             // Get IPv6 address from serverdata
             if (serverData.GetLength() >= Ip6::Address::kInfoStringSize) {
                 ExitNow(error = kErrorInvalidState);
@@ -2225,6 +2226,8 @@ Error MleRouter::ProcessMUDUrl(String<kMUDUrlMaxLength> aMUDUrl, const Child *ne
 
             serverAddressString.AppendHexBytes(serverData.GetBytes(), serverData.GetLength());
             SuccessOrExit(error = serverAddress.FromString(serverAddressString.AsCString()));
+
+            LogInfo("read ipv6 address %s", serverAddress.ToString().AsCString());
 
             // Send UDP message with mudUrl and child external IP address to serveripaddress
             if (MUDmessage != nullptr)
@@ -2246,6 +2249,7 @@ Error MleRouter::ProcessMUDUrl(String<kMUDUrlMaxLength> aMUDUrl, const Child *ne
             messageInfo.SetPeerPort(kMUDForwarderPort);
             messageInfo.SetPeerAddr(serverAddress);
 
+            LogInfo("Sending UDP MUD messge");
             SuccessOrExit(error = mSocket.SendTo(*MUDmessage, messageInfo));
         }
     }
