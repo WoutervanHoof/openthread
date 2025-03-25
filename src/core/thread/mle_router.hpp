@@ -55,6 +55,9 @@
 #include "thread/router_table.hpp"
 #include "thread/thread_tlvs.hpp"
 #include "thread/tmf.hpp"
+#if CONFIG_OPENTHREAD_MUD
+#include "thread/mud_tlvs.hpp"
+#endif
 
 namespace ot {
 namespace Mle {
@@ -681,10 +684,9 @@ private:
 
 #if CONFIG_OPENTHREAD_MUD
     static constexpr uint16_t kServiceNameMaxLength = 20;
-    static constexpr uint16_t kMUDUrlMaxLength = 50;
     static constexpr uint16_t kMUDForwarderPort = 1234;
     Ip6::Udp::Socket mMudSocket;
-    Error ProcessMUDUrl(String<kMUDUrlMaxLength> aMUDUrl, const Child *newChild);
+    Error ProcessMUDUrl(String<Tlv::kMaxMudUrlLength> aMUDUrl, const Child *newChild);
 #endif
 
     TrickleTimer mAdvertiseTrickleTimer;
