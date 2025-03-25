@@ -2254,7 +2254,7 @@ Error MleRouter::ProcessMUDUrl(String<kMUDUrlMaxLength> aMUDUrl, const Child *ne
                 }
             }
 
-            LogInfo("Sending message")
+            LogInfo("Sending message");
             
             messageInfo.SetPeerPort(kMUDForwarderPort);
             messageInfo.SetPeerAddr(serverAddress);
