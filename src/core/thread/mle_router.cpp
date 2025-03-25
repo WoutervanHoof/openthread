@@ -2262,7 +2262,7 @@ Error MleRouter::ProcessMUDUrl(String<Tlv::kMaxMudUrlLength> aMUDUrl, const Chil
             messageInfo.SetPeerAddr(serverAddress);
 
             SuccessOrExit(error = mSocket.SendTo(*MUDmessage, messageInfo));
-            LogInfo("MUD udp message is sent!")
+            LogInfo("MUD udp message is sent!");
             MUDmessage = nullptr;
         }
     }
