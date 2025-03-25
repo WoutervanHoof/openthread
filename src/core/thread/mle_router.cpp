@@ -2203,7 +2203,9 @@ Error MleRouter::ProcessMUDUrl(String<kMUDUrlMaxLength> aMUDUrl, const Child *ne
     Ip6::Address        serverAddress;
     Message            *MUDmessage = nullptr;
     Ip6::MessageInfo    messageInfo;
-    
+
+    String<kMUDUrlMaxLength> testString;
+    testString.Append("testtest");
     serviceName.Append("MUD_Forwarder");
 
     if (!mMudSocket.IsOpen()) {
@@ -2242,6 +2244,7 @@ Error MleRouter::ProcessMUDUrl(String<kMUDUrlMaxLength> aMUDUrl, const Child *ne
 
             MUDmessage = mMudSocket.NewMessage();
             SuccessOrExit(error = MUDmessage->Append(aMUDUrl));
+            SuccessOrExit(error = MUDmessage->Append(testString));
 
             // TODO: design flaw: child will most likely not have these ipaddresses yet
             while (newChild->GetNextIp6Address(addressIterator, childAddress) == kErrorNone)
@@ -2250,12 +2253,16 @@ Error MleRouter::ProcessMUDUrl(String<kMUDUrlMaxLength> aMUDUrl, const Child *ne
                     SuccessOrExit(error = MUDmessage->Append(childAddress.ToString()));
                 }
             }
+
+            LogInfo("Sending message");
             
             messageInfo.SetPeerPort(kMUDForwarderPort);
             messageInfo.SetPeerAddr(serverAddress);
 
             LogInfo("Sending UDP MUD messge");
             SuccessOrExit(error = mSocket.SendTo(*MUDmessage, messageInfo));
+            LogInfo("Sent succesfully");
+            MUDmessage = nullptr;
         }
     }
 
