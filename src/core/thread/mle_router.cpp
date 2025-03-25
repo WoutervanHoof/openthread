@@ -2194,6 +2194,7 @@ Error MleRouter::ProcessMUDUrl(String<kMUDUrlMaxLength> aMUDUrl, const Child *ne
     NetworkData::ServiceConfig  service;
     NetworkData::ServiceData    serviceData;
     NetworkData::ServerData     serverData;
+    uint8_t                     serverDataLength;
 
     Ip6::Address            childAddress;
     Child::AddressIterator  addressIterator = Child::kAddressIteratorInit;
@@ -2218,15 +2219,18 @@ Error MleRouter::ProcessMUDUrl(String<kMUDUrlMaxLength> aMUDUrl, const Child *ne
         if (service.mServiceDataLength == serviceName.GetLength() + 1 && serviceData.MatchesBytesIn(serviceName.AsCString()) ) {
             LogInfo("reading ipv6 string");
             service.GetServerConfig().GetServerData(serverData);
+            serverDataLength = service.GetServerConfig().mServerDataLength;
             // Get IPv6 address from serverdata
-            if (service.GetServerConfig().mServerDataLength > Ip6::Address::kInfoStringSize) {
-                LogWarn("serverdatalenght %d > ip6 infostringsize %d ", service.GetServerConfig().mServerDataLength, Ip6::Address::kInfoStringSize);
+            if (serverDataLength > Ip6::Address::kInfoStringSize) {
+                LogWarn("serverdatalenght %d > ip6 infostringsize %d ", serverDataLength, Ip6::Address::kInfoStringSize);
                 ExitNow(error = kErrorInvalidState);
             }
 
-            serverAddressString.AppendHexBytes(serverData.GetBytes(), serverData.GetLength());
-            LogInfo("parsing string %s", serverAddressString.AsCString());
-            SuccessOrExit(error = serverAddress.FromString(serverAddressString.AsCString()));
+            serverAddress.SetBytes(serverData.GetBytes());
+
+            // serverAddressString.AppendHexBytes(serverData.GetBytes(), serverDataLength);
+            // LogInfo("parsing string %s", serverAddressString.AsCString());
+            // SuccessOrExit(error = serverAddress.FromString(serverAddressString.AsCString()));
 
             LogInfo("read ipv6 address %s", serverAddress.ToString().AsCString());
 
