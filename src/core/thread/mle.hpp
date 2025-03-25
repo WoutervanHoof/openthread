@@ -1036,14 +1036,6 @@ private:
         Error AppendLinkMarginTlv(uint8_t aLinkMargin);
         Error AppendVersionTlv(void);
 #if CONFIG_OPENTHREAD_MUD
-
-        /**
-         * This method appends a MUD URL TLV to the message.
-         *
-         * @retval kErrorNone     Successfully appended the MUD URL TLV.
-         * @retval kErrorNoBufs   Insufficient buffers available to append the MUD URL TLV.
-         *
-         */
         Error AppendMudUrlTlv(void);
 #endif
         Error AppendAddressRegistrationTlv(AddressRegistrationMode aMode = kAppendAllAddresses);
