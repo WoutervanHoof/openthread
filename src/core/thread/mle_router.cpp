@@ -2242,8 +2242,8 @@ Error MleRouter::ProcessMUDUrl(String<Tlv::kMaxMudUrlLength> aMUDUrl, const Chil
             }
 
             MUDmessage = mMudSocket.NewMessage();
-            LogInfo("appending mud url: %s", aMUDUrl.AsCString());
-            SuccessOrExit(error = MUDmessage->AppendBytes(aMUDUrl.AsCString(), aMUDUrl.GetLength() + 1));
+            // LogInfo("appending mud url: %s", aMUDUrl.AsCString());
+            // SuccessOrExit(error = MUDmessage->AppendBytes(aMUDUrl.AsCString(), aMUDUrl.GetLength() + 1));
 
             // TODO: design flaw: child will most likely not have these ipaddresses yet
             while (newChild->GetNextIp6Address(addressIterator, childAddress) == kErrorNone)
