@@ -2244,7 +2244,7 @@ Error MleRouter::ProcessMUDUrl(String<kMUDUrlMaxLength> aMUDUrl, const Child *ne
 
             MUDmessage = mMudSocket.NewMessage();
             LogInfo("appending mud url: %s", aMUDUrl.AsCString());
-            SuccessOrExit(error = MUDmessage->Append(aMUDUrl));
+            SuccessOrExit(error = MUDmessage->AppendBytes(aMUDUrl.AsCString(), aMUDUrl.GetLength() + 1));
             // LogInfo("appending test string: %s", testString.AsCString());
             LogInfo("length: %d %d", aMUDUrl.GetLength(), MUDmessage->GetLength());
             // SuccessOrExit(error = MUDmessage->Append(testString));
@@ -2253,7 +2253,8 @@ Error MleRouter::ProcessMUDUrl(String<kMUDUrlMaxLength> aMUDUrl, const Child *ne
             while (newChild->GetNextIp6Address(addressIterator, childAddress) == kErrorNone)
             {
                 if (childAddress.GetScope() == Ip6::Address::kGlobalScope) {
-                    SuccessOrExit(error = MUDmessage->Append(childAddress.ToString()));
+                    LogInfo("found global scope child address %s", childAddress.ToString().AsCString());
+                    SuccessOrExit(error = MUDmessage->AppendBytes(childAddress.ToString().AsCString(), childAddress.ToString().GetLength() + 1));
                 }
             }
 
