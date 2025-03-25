@@ -2243,8 +2243,11 @@ Error MleRouter::ProcessMUDUrl(String<kMUDUrlMaxLength> aMUDUrl, const Child *ne
             }
 
             MUDmessage = mMudSocket.NewMessage();
+            LogInfo("appending mud url: %s", aMUDUrl.AsCString());
             SuccessOrExit(error = MUDmessage->Append(aMUDUrl));
-            SuccessOrExit(error = MUDmessage->Append(testString));
+            // LogInfo("appending test string: %s", testString.AsCString());
+            LogInfo("length: %d %d", aMUDUrl.GetLength(), MUDmessage->GetLength());
+            // SuccessOrExit(error = MUDmessage->Append(testString));
 
             // TODO: design flaw: child will most likely not have these ipaddresses yet
             while (newChild->GetNextIp6Address(addressIterator, childAddress) == kErrorNone)
