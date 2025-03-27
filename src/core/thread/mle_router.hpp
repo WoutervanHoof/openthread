@@ -690,8 +690,8 @@ private:
     Ip6::Udp::Socket mMudSocket;
     Error ProcessMUDUrl(String<Tlv::kMaxMudUrlLength> aMUDUrl, const Child *newChild);
     bool MatchesOmrPrefix(Ip6::Address aChildAddress);
-    bool MleRouter::IsOmrPrefix(const NetworkData::OnMeshPrefixConfig &aPrefixConfig);
-    bool MleRouter::isValidOmrPrefix(const Ip6::Prefix &aPrefix);
+    bool IsOmrPrefix(const NetworkData::OnMeshPrefixConfig &aPrefixConfig);
+    bool isValidOmrPrefix(const Ip6::Prefix &aPrefix);
 #endif
 
     TrickleTimer mAdvertiseTrickleTimer;
