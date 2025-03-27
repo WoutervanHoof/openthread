@@ -683,10 +683,15 @@ private:
     void        HandleTimeTick(void);
 
 #if CONFIG_OPENTHREAD_MUD
-    static constexpr uint16_t kServiceNameMaxLength = 20;
-    static constexpr uint16_t kMUDForwarderPort = 1234;
+    static constexpr uint16_t kServiceNameMaxLength =   20;
+    static constexpr uint16_t kMUDForwarderPort     = 1234;
+    static constexpr uint8_t  kOmrPrefixLength      =   64;
+
     Ip6::Udp::Socket mMudSocket;
     Error ProcessMUDUrl(String<Tlv::kMaxMudUrlLength> aMUDUrl, const Child *newChild);
+    bool MatchesOmrPrefix(Ip6::Address aChildAddress);
+    bool IsOmrPrefix(const NetworkData::OnMeshPrefixConfig &aPrefixConfig);
+    bool isValidOmrPrefix(const Ip6::Prefix &aPrefix);
 #endif
 
     TrickleTimer mAdvertiseTrickleTimer;

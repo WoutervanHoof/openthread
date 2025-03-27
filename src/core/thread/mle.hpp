@@ -1100,6 +1100,9 @@ private:
 #if OPENTHREAD_FTD
         Error ReadRouteTlv(RouteTlv &aRouteTlv) const;
 #endif
+#if CONFIG_OPENTHREAD_MUD
+        Error ReadMudUrlTlv(String<Tlv::kMaxMudUrlLength> &aMudUrl);
+#endif
 
     private:
         Error ReadChallengeOrResponse(uint8_t aTlvType, RxChallenge &aRxChallenge) const;
