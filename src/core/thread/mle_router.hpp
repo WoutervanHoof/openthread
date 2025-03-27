@@ -689,6 +689,7 @@ private:
 
     Ip6::Udp::Socket mMudSocket;
     Error ProcessMUDUrl(String<Tlv::kMaxMudUrlLength> aMUDUrl, const Child *newChild);
+    Error MleRouter::FindMudForwarderIp(Ip6::Address &serverAddress);
     bool MatchesOmrPrefix(Ip6::Address aChildAddress);
     bool IsOmrPrefix(const NetworkData::OnMeshPrefixConfig &aPrefixConfig);
     bool isValidOmrPrefix(const Ip6::Prefix &aPrefix);
