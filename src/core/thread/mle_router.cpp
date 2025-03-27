@@ -2099,8 +2099,10 @@ void MleRouter::HandleChildIdRequest(RxInfo &aRxInfo)
 
     VerifyOrExit(tlvList.GetLength() <= Child::kMaxRequestTlvs, error = kErrorParse);
 
+    LogInfo("We first get here!");
     if (!mode.IsFullThreadDevice())
     {
+        LogInfo("WE GET HERE!");
         SuccessOrExit(error = ProcessAddressRegistrationTlv(aRxInfo, *child));
 #if CONFIG_OPENTHREAD_MUD
         if (Tlv::Find<MudUrlTlv>(aRxInfo.mMessage, mudUrlBuffer) == kErrorNone) {
@@ -2200,7 +2202,7 @@ Error MleRouter::ProcessMUDUrl(String<Tlv::kMaxMudUrlLength> aMUDUrl, const Chil
 
     SuccessOrExit(error = FindMudForwarderIp(serverAddress));
     LogInfo("found mud forwarder ip: %s", serverAddress.ToString().AsCString());
-    
+
     // Send UDP message with mudUrl and child external IP address to serveripaddress
     MUDmessage = mMudSocket.NewMessage();
 
