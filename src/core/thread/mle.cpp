@@ -2087,6 +2087,9 @@ Error Mle::SendChildUpdateRequest(ChildUpdateRequestMode aMode)
     if (!IsFullThreadDevice())
     {
         SuccessOrExit(error = message->AppendAddressRegistrationTlv(addrRegMode));
+#if CONFIG_OPENTHREAD_MUD
+        SuccessOrExit(error = message->AppendMudUrlTlv());
+#endif
     }
 
     destination.SetToLinkLocalAddress(mParent.GetExtAddress());
@@ -5059,6 +5062,20 @@ Error Mle::RxMessage::ReadLeaderDataTlv(LeaderData &aLeaderData) const
 exit:
     return error;
 }
+
+#if CONFIG_OPENTHREAD_MUD
+Error Mle::RxMessage::ReadMudUrlTlv(String<Tlv::kMaxMudUrlLength> &aMudUrl)
+{
+    Error   error;
+    char    mudUrlBuffer[Tlv::kMaxMudUrlLength+1];
+
+    SuccessOrExit(error = Tlv::Find<MudUrlTlv>(*this, mudUrlBuffer));
+    aMudUrl.Append(mudUrlBuffer);
+
+exit:
+    return error;
+}
+#endif
 
 Error Mle::RxMessage::ReadAndSetNetworkDataTlv(const LeaderData &aLeaderData) const
 {
