@@ -69,13 +69,6 @@ const otMeshLocalPrefix Mle::kMeshLocalPrefixInit = {
     {0xfd, 0xde, 0xad, 0x00, 0xbe, 0xef, 0x00, 0x00},
 };
 
-#if CONFIG_OPENTHREAD_MUD
-#ifndef CONFIG_OPENTHREAD_MUD_URL
-#define CONFIG_OPENTHREAD_MUD_URL "https://test.nl/mud"
-#endif
-static const char* mud_url = CONFIG_OPENTHREAD_MUD_URL;
-#endif
-
 Mle::Mle(Instance &aInstance)
     : InstanceLocator(aInstance)
     , mRetrieveNewNetworkData(false)
@@ -150,6 +143,10 @@ Mle::Mle(Instance &aInstance)
 
     mMeshLocalPrefix.Clear();
     SetMeshLocalPrefix(AsCoreType(&kMeshLocalPrefixInit));
+
+#if CONFIG_OPENTHREAD_MUD
+    mMudUrl.Append(CONFIG_OPENTHREAD_MUD_URL);
+#endif
 }
 
 Error Mle::Enable(void)
@@ -2087,9 +2084,9 @@ Error Mle::SendChildUpdateRequest(ChildUpdateRequestMode aMode)
     if (!IsFullThreadDevice())
     {
         SuccessOrExit(error = message->AppendAddressRegistrationTlv(addrRegMode));
-#if CONFIG_OPENTHREAD_MUD
-        SuccessOrExit(error = message->AppendMudUrlTlv());
-#endif
+// #if CONFIG_OPENTHREAD_MUD
+//         SuccessOrExit(error = message->AppendMudUrlTlv());
+// #endif
     }
 
     destination.SetToLinkLocalAddress(mParent.GetExtAddress());
@@ -4555,7 +4552,7 @@ Error Mle::TxMessage::AppendLinkMarginTlv(uint8_t aLinkMargin)
 Error Mle::TxMessage::AppendVersionTlv(void) { return Tlv::Append<VersionTlv>(*this, kThreadVersion); }
 
 #if CONFIG_OPENTHREAD_MUD
-Error Mle::TxMessage::AppendMudUrlTlv(void) { return Tlv::Append<MudUrlTlv>(*this, mud_url); }
+Error Mle::TxMessage::AppendMudUrlTlv(void) { return Tlv::Append<MudUrlTlv>(*this, mMudUrl.AsCString()); }
 #endif
 
 Error Mle::TxMessage::AppendAddressRegistrationTlv(AddressRegistrationMode aMode)
@@ -5063,6 +5060,7 @@ exit:
     return error;
 }
 
+#if OPENTHREAD_FTD
 #if CONFIG_OPENTHREAD_MUD
 Error Mle::RxMessage::ReadMudUrlTlv(String<Tlv::kMaxMudUrlLength> &aMudUrl)
 {
@@ -5075,6 +5073,7 @@ Error Mle::RxMessage::ReadMudUrlTlv(String<Tlv::kMaxMudUrlLength> &aMudUrl)
 exit:
     return error;
 }
+#endif
 #endif
 
 Error Mle::RxMessage::ReadAndSetNetworkDataTlv(const LeaderData &aLeaderData) const
