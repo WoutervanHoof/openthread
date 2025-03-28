@@ -35,8 +35,9 @@
 #ifndef MUD_TLVS_HPP_
 #define MUD_TLVS_HPP_
 
-#include "openthread/mud.h"
+#if OPENTHREAD_FTD
 
+#include "openthread/mud.h"
 #include "common/tlvs.hpp"
 
 namespace ot
@@ -73,7 +74,7 @@ public:
     void SetType(Type aType) { ot::Tlv::SetType(static_cast<uint8_t>(aType)); }
 } OT_TOOL_PACKED_END;
 
-typedef StringTlvInfo<MudTlv::kMudUrl, MudTlv::kMaxMudUrlLength> MudUrlTlv;
+typedef StringTlvInfo<MudTlv::kMudUrl, MudTlv::kMaxMudUrlLength> MudUrlForwarderTlv;
 
 typedef StringTlvInfo<MudTlv::kMucChildIP, MudTlv::kMaxMudUrlLength> ChildIpTlv;
 
@@ -81,5 +82,6 @@ typedef StringTlvInfo<MudTlv::kMucChildIP, MudTlv::kMaxMudUrlLength> ChildIpTlv;
 
 } // namespace ot
 
+#endif // OPENTHREAD_FTD
 
 #endif // MUD_TLVS_HPP_

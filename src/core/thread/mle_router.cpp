@@ -2215,7 +2215,7 @@ Error MleRouter::ProcessMUDUrl(String<Tlv::kMaxMudUrlLength> aMUDUrl, const Chil
         }
     }
 
-    SuccessOrExit(error = ot::Tlv::Append<Mud::MudUrlTlv>(*MUDmessage, aMUDUrl.AsCString()));
+    SuccessOrExit(error = ot::Tlv::Append<Mud::MudUrlForwarderTlv>(*MUDmessage, aMUDUrl.AsCString()));
     SuccessOrExit(error = ot::Tlv::Append<Mud::ChildIpTlv>(*MUDmessage, childAddress.ToString().AsCString()));
     
     messageInfo.SetPeerPort(kMUDForwarderPort);
