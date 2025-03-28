@@ -836,6 +836,10 @@ private:
     static constexpr uint32_t kDefaultChildTimeout      = OPENTHREAD_CONFIG_MLE_CHILD_TIMEOUT_DEFAULT;
     static constexpr uint32_t kDefaultCslTimeout        = OPENTHREAD_CONFIG_CSL_TIMEOUT;
 
+#if CONFIG_OPENTHREAD_MUD
+    static String<Tlv::kMaxMudUrlLength> mMudUrl;
+#endif
+
     //------------------------------------------------------------------------------------------------------------------
     // Enumerations
 
@@ -1099,9 +1103,9 @@ private:
 #endif
 #if OPENTHREAD_FTD
         Error ReadRouteTlv(RouteTlv &aRouteTlv) const;
-#endif
 #if CONFIG_OPENTHREAD_MUD
         Error ReadMudUrlTlv(String<Tlv::kMaxMudUrlLength> &aMudUrl);
+#endif
 #endif
 
     private:
