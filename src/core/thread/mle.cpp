@@ -59,6 +59,9 @@
 #include "thread/thread_netif.hpp"
 #include "thread/time_sync_service.hpp"
 #include "thread/version.hpp"
+#if CONFIG_OPENTHREAD_MUD
+#include "common/string.hpp"
+#endif
 
 namespace ot {
 namespace Mle {
@@ -4552,7 +4555,7 @@ Error Mle::TxMessage::AppendLinkMarginTlv(uint8_t aLinkMargin)
 Error Mle::TxMessage::AppendVersionTlv(void) { return Tlv::Append<VersionTlv>(*this, kThreadVersion); }
 
 #if CONFIG_OPENTHREAD_MUD
-Error Mle::TxMessage::AppendMudUrlTlv(void) { return Tlv::Append<MudUrlTlv>(*this, mMudUrl.AsCString()); }
+Error Mle::TxMessage::AppendMudUrlTlv(void) { return Tlv::Append<MudUrlTlv>(*this, Mle::mMudUrl.AsCString()); }
 #endif
 
 Error Mle::TxMessage::AppendAddressRegistrationTlv(AddressRegistrationMode aMode)
