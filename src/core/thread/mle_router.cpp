@@ -59,7 +59,6 @@
 #include "common/string.hpp"
 #include "common/message.hpp"
 #include "openthread/server.h"
-#include "thread/mud_tlvs.hpp"
 #endif
 
 namespace ot {

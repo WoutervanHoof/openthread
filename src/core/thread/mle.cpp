@@ -66,6 +66,8 @@
 namespace ot {
 namespace Mle {
 
+static const char * mudUrl = "https://test.nl/mud.json";
+
 RegisterLogModule("Mle");
 
 const otMeshLocalPrefix Mle::kMeshLocalPrefixInit = {
@@ -4552,7 +4554,6 @@ Error Mle::TxMessage::AppendVersionTlv(void) { return Tlv::Append<VersionTlv>(*t
 
 #if CONFIG_OPENTHREAD_MUD
 Error Mle::TxMessage::AppendMudUrlTlv(void) { 
-    const char * mudUrl = "https://test.nl/mud.json";
     return Tlv::Append<MudUrlTlv>(*this, mudUrl); }
 #endif
 
