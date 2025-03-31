@@ -55,9 +55,6 @@
 #include "thread/router_table.hpp"
 #include "thread/thread_tlvs.hpp"
 #include "thread/tmf.hpp"
-#if CONFIG_OPENTHREAD_MUD
-#include "thread/mud_tlvs.hpp"
-#endif
 
 namespace ot {
 namespace Mle {

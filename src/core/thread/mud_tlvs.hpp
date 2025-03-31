@@ -35,8 +35,6 @@
 #ifndef MUD_TLVS_HPP_
 #define MUD_TLVS_HPP_
 
-#if OPENTHREAD_FTD
-
 #include "openthread/mud.h"
 #include "common/tlvs.hpp"
 
@@ -44,6 +42,8 @@ namespace ot
 {
 namespace Mud 
 {
+
+#if OPENTHREAD_FTD
 
 OT_TOOL_PACKED_BEGIN
 class MudTlv : public ot::Tlv
@@ -78,10 +78,10 @@ typedef StringTlvInfo<MudTlv::kMudUrl, MudTlv::kMaxMudUrlLength> MudUrlForwarder
 
 typedef StringTlvInfo<MudTlv::kMucChildIP, MudTlv::kMaxMudUrlLength> ChildIpTlv;
 
+#endif // OPENTHREAD_FTD
+
 } // namespace Mud
 
 } // namespace ot
-
-#endif // OPENTHREAD_FTD
 
 #endif // MUD_TLVS_HPP_

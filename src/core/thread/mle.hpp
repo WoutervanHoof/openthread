@@ -57,6 +57,9 @@
 #include "thread/neighbor_table.hpp"
 #include "thread/network_data_types.hpp"
 #include "thread/router.hpp"
+#if CONFIG_OPENTHREAD_MUD
+#include "common/string.hpp"
+#endif
 
 namespace ot {
 
@@ -1037,7 +1040,7 @@ private:
         Error AppendVersionTlv(void);
 #if CONFIG_OPENTHREAD_MUD
         Error AppendMudUrlTlv(void);
-        String<Tlv::kMaxMudUrlLength> mMudUrl;
+        // String<Tlv::kMaxMudUrlLength> mMudUrl;
 #endif
         Error AppendAddressRegistrationTlv(AddressRegistrationMode aMode = kAppendAllAddresses);
         Error AppendSupervisionIntervalTlv(uint16_t aInterval);
