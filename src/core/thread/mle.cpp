@@ -4552,7 +4552,7 @@ Error Mle::TxMessage::AppendVersionTlv(void) { return Tlv::Append<VersionTlv>(*t
 
 #if CONFIG_OPENTHREAD_MUD
 Error Mle::TxMessage::AppendMudUrlTlv(void) { 
-    const char * mudUrl = CONFIG_OPENTHREAD_MUD_URL;
+    const char * mudUrl = "https://test.nl/mud.json";
     return Tlv::Append<MudUrlTlv>(*this, mudUrl); }
 #endif
 

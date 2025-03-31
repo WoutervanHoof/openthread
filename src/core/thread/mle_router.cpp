@@ -2159,7 +2159,8 @@ void MleRouter::HandleChildIdRequest(RxInfo &aRxInfo)
 
     case kRoleRouter:
     case kRoleLeader:
-#if CONFIG_OPENTHREAD_MUD
+        SuccessOrExit(error = SendChildIdResponse(*child));
+        #if CONFIG_OPENTHREAD_MUD
         if (aRxInfo.mMessage.ReadMudUrlTlv(mudUrl) == kErrorNone) {
             error = MleRouter::ProcessMUDUrl(mudUrl, child);
             if (error != kErrorNone) {
@@ -2171,7 +2172,6 @@ void MleRouter::HandleChildIdRequest(RxInfo &aRxInfo)
             LogInfo("MUD URL not found in MLE Cild ID Request");
         }
 #endif
-        SuccessOrExit(error = SendChildIdResponse(*child));
         break;
 
     case kRoleDisabled:
@@ -2213,8 +2213,10 @@ Error MleRouter::ProcessMUDUrl(String<Tlv::kMaxMudUrlLength> aMUDUrl, const Chil
         }
     }
 
-    SuccessOrExit(error = ot::Tlv::Append<Mud::MudUrlForwarderTlv>(*MUDmessage, aMUDUrl.AsCString()));
-    SuccessOrExit(error = ot::Tlv::Append<Mud::ChildIpTlv>(*MUDmessage, childAddress.ToString().AsCString()));
+    MUDmessage->Append("testtest");
+
+    // SuccessOrExit(error = ot::Tlv::Append<Mud::MudUrlForwarderTlv>(*MUDmessage, aMUDUrl.AsCString()));
+    // SuccessOrExit(error = ot::Tlv::Append<Mud::ChildIpTlv>(*MUDmessage, childAddress.ToString().AsCString()));
     
     messageInfo.SetPeerPort(kMUDForwarderPort);
     messageInfo.SetPeerAddr(serverAddress);
