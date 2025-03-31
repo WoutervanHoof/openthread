@@ -836,10 +836,6 @@ private:
     static constexpr uint32_t kDefaultChildTimeout      = OPENTHREAD_CONFIG_MLE_CHILD_TIMEOUT_DEFAULT;
     static constexpr uint32_t kDefaultCslTimeout        = OPENTHREAD_CONFIG_CSL_TIMEOUT;
 
-#if CONFIG_OPENTHREAD_MUD
-    static String<Tlv::kMaxMudUrlLength> mMudUrl;
-#endif
-
     //------------------------------------------------------------------------------------------------------------------
     // Enumerations
 
@@ -1041,6 +1037,7 @@ private:
         Error AppendVersionTlv(void);
 #if CONFIG_OPENTHREAD_MUD
         Error AppendMudUrlTlv(void);
+        String<Tlv::kMaxMudUrlLength> mMudUrl;
 #endif
         Error AppendAddressRegistrationTlv(AddressRegistrationMode aMode = kAppendAllAddresses);
         Error AppendSupervisionIntervalTlv(uint16_t aInterval);

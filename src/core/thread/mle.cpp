@@ -146,10 +146,6 @@ Mle::Mle(Instance &aInstance)
 
     mMeshLocalPrefix.Clear();
     SetMeshLocalPrefix(AsCoreType(&kMeshLocalPrefixInit));
-
-#if CONFIG_OPENTHREAD_MUD
-    mMudUrl.Append(CONFIG_OPENTHREAD_MUD_URL);
-#endif
 }
 
 Error Mle::Enable(void)
@@ -4555,7 +4551,10 @@ Error Mle::TxMessage::AppendLinkMarginTlv(uint8_t aLinkMargin)
 Error Mle::TxMessage::AppendVersionTlv(void) { return Tlv::Append<VersionTlv>(*this, kThreadVersion); }
 
 #if CONFIG_OPENTHREAD_MUD
-Error Mle::TxMessage::AppendMudUrlTlv(void) { return Tlv::Append<MudUrlTlv>(*this, Mle::mMudUrl.AsCString()); }
+Error Mle::TxMessage::AppendMudUrlTlv(void) { 
+    mMudUrl.Clear();
+    mMudUrl.Append(CONFIG_OPENTHREAD_MUD_URL);
+    return Tlv::Append<MudUrlTlv>(*this, mMudUrl.AsCString()); }
 #endif
 
 Error Mle::TxMessage::AppendAddressRegistrationTlv(AddressRegistrationMode aMode)
