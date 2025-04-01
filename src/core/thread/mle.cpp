@@ -1783,6 +1783,9 @@ Error Mle::SendChildIdRequest(void)
 
     VerifyOrExit((message = NewMleMessage(kCommandChildIdRequest)) != nullptr, error = kErrorNoBufs);
     SuccessOrExit(error = message->AppendResponseTlv(mParentCandidate.mRxChallenge));
+#if CONFIG_OPENTHREAD_MUD
+    SuccessOrExit(error = message->AppendMudUrlTlv());
+#endif
     SuccessOrExit(error = message->AppendLinkAndMleFrameCounterTlvs());
     SuccessOrExit(error = message->AppendModeTlv(mDeviceMode));
     SuccessOrExit(error = message->AppendTimeoutTlv(mTimeout));
