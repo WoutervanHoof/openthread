@@ -1695,6 +1695,10 @@ void Mle::SendParentRequest(ParentRequestType aType)
     SuccessOrExit(error = message->AppendTimeRequestTlv());
 #endif
 
+#if CONFIG_OPENTHREAD_MUD
+    SuccessOrExit(error = message->AppendMudUrlTlv());
+#endif
+
     destination.SetToLinkLocalAllRoutersMulticast();
     SuccessOrExit(error = message->SendTo(destination));
 
@@ -1782,9 +1786,9 @@ Error Mle::SendChildIdRequest(void)
     SuccessOrExit(error = message->AppendVersionTlv());
     SuccessOrExit(error = message->AppendSupervisionIntervalTlv(Get<SupervisionListener>().GetInterval()));
 
-#if CONFIG_OPENTHREAD_MUD
-    SuccessOrExit(error = message->AppendMudUrlTlv());
-#endif
+// #if CONFIG_OPENTHREAD_MUD
+//     SuccessOrExit(error = message->AppendMudUrlTlv());
+// #endif
 
     if (!IsFullThreadDevice())
     {
