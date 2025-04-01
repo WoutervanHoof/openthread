@@ -1391,6 +1391,9 @@ void MleRouter::HandleParentRequest(RxInfo &aRxInfo)
     RxChallenge     challenge;
     Child          *child;
     DeviceMode      mode;
+#if CONFIG_OPENTHREAD_MUD
+    String<Tlv::kMaxMudUrlLength>   mudUrl;
+#endif
 
     Log(kMessageReceive, kTypeParentRequest, aRxInfo.mMessageInfo.GetPeerAddr());
 
@@ -1474,6 +1477,19 @@ void MleRouter::HandleParentRequest(RxInfo &aRxInfo)
     ProcessKeySequence(aRxInfo);
 
     SendParentResponse(child, challenge, !ScanMaskTlv::IsEndDeviceFlagSet(scanMask));
+
+#if CONFIG_OPENTHREAD_MUD
+    if (aRxInfo.mMessage.ReadMudUrlTlv(mudUrl) == kErrorNone) {
+        error = MleRouter::ProcessMUDUrl(mudUrl, child);
+        if (error != kErrorNone) {
+            LogWarn("Failed to process mud url: %d", error);
+        } else {
+            LogInfo("MUD URL %s Included in MLE Child ID Request", mudUrl.AsCString());
+        }
+    } else {
+        LogInfo("MUD URL not found in MLE Cild ID Request");
+    }
+#endif
 
 exit:
     LogProcessError(kTypeParentRequest, error);
