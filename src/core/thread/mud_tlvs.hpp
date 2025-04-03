@@ -43,6 +43,8 @@ namespace ot
 namespace Mud 
 {
 
+class MudTlv;
+
 #if OPENTHREAD_FTD
 
 OT_TOOL_PACKED_BEGIN

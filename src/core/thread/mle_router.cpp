@@ -55,7 +55,7 @@
 #include "thread/version.hpp"
 #include "utils/otns.hpp"
 
-#if CONFIG_OPENTRHREAD_MUD
+#if CONFIG_OPENTHREAD_MUD
 #include "common/string.hpp"
 #include "common/message.hpp"
 #include "openthread/server.h"
@@ -1391,9 +1391,6 @@ void MleRouter::HandleParentRequest(RxInfo &aRxInfo)
     RxChallenge     challenge;
     Child          *child;
     DeviceMode      mode;
-#if CONFIG_OPENTHREAD_MUD
-    String<Tlv::kMaxMudUrlLength>   mudUrl;
-#endif
 
     Log(kMessageReceive, kTypeParentRequest, aRxInfo.mMessageInfo.GetPeerAddr());
 
@@ -1477,19 +1474,6 @@ void MleRouter::HandleParentRequest(RxInfo &aRxInfo)
     ProcessKeySequence(aRxInfo);
 
     SendParentResponse(child, challenge, !ScanMaskTlv::IsEndDeviceFlagSet(scanMask));
-
-#if CONFIG_OPENTHREAD_MUD
-    if (aRxInfo.mMessage.ReadMudUrlTlv(mudUrl) == kErrorNone) {
-        error = MleRouter::ProcessMUDUrl(mudUrl, child);
-        if (error != kErrorNone) {
-            LogWarn("Failed to process mud url: %d", error);
-        } else {
-            LogInfo("MUD URL %s Included in MLE Child ID Request", mudUrl.AsCString());
-        }
-    } else {
-        LogInfo("MUD URL not found in MLE Cild ID Request");
-    }
-#endif
 
 exit:
     LogProcessError(kTypeParentRequest, error);
@@ -2035,9 +2019,6 @@ void MleRouter::HandleChildIdRequest(RxInfo &aRxInfo)
     Child             *child;
     Router            *router;
     uint16_t           supervisionInterval;
-#if CONFIG_OPENTHREAD_MUD
-    String<Tlv::kMaxMudUrlLength>   mudUrl;
-#endif
 
     Log(kMessageReceive, kTypeChildIdRequest, aRxInfo.mMessageInfo.GetPeerAddr());
 
@@ -2175,18 +2156,6 @@ void MleRouter::HandleChildIdRequest(RxInfo &aRxInfo)
 
     case kRoleRouter:
     case kRoleLeader:
-#if CONFIG_OPENTHREAD_MUD
-        if (aRxInfo.mMessage.ReadMudUrlTlv(mudUrl) == kErrorNone) {
-            error = MleRouter::ProcessMUDUrl(mudUrl, child);
-            if (error != kErrorNone) {
-                LogWarn("Failed to process mud url: %d", error);
-            } else {
-                LogInfo("MUD URL %s Included in MLE Child ID Request", mudUrl.AsCString());
-            }
-        } else {
-            LogInfo("MUD URL not found in MLE Cild ID Request");
-        }
-#endif
         SuccessOrExit(error = SendChildIdResponse(*child));
         break;
 
@@ -2207,7 +2176,6 @@ Error MleRouter::ProcessMUDUrl(String<Tlv::kMaxMudUrlLength> aMUDUrl, const Chil
     Ip6::Address            childAddress;
     Ip6::Address            serverAddress;
     Ip6::MessageInfo        messageInfo;
-
     childAddress.Clear();
 
     if (!mMudSocket.IsOpen()) {
@@ -2327,9 +2295,9 @@ void MleRouter::HandleChildUpdateRequest(RxInfo &aRxInfo)
     TlvList         requestedTlvList;
     TlvList         tlvList;
     bool            childDidChange = false;
-// #if CONFIG_OPENTHREAD_MUD
-//     String<Tlv::kMaxMudUrlLength> childMudUrl;
-// #endif
+#if CONFIG_OPENTHREAD_MUD
+    String<Tlv::kMaxMudUrlLength> childMudUrl;
+#endif
 
     Log(kMessageReceive, kTypeChildUpdateRequestOfChild, aRxInfo.mMessageInfo.GetPeerAddr());
 
@@ -2398,18 +2366,18 @@ void MleRouter::HandleChildUpdateRequest(RxInfo &aRxInfo)
         ExitNow(error = kErrorParse);
     }
 
-// #if CONFIG_OPENTHREAD_MUD
-//     switch (aRxInfo.mMessage.ReadMudUrlTlv(childMudUrl))
-//     {
-//     case kErrorNone:
-//         ProcessMUDUrl(childMudUrl, child);
-//         break;
-//     case kErrorNotFound:
-//         break;
-//     default:
-//         ExitNow(error = kErrorParse);
-//     }
-// #endif
+#if CONFIG_OPENTHREAD_MUD
+    switch (aRxInfo.mMessage.ReadMudUrlTlv(childMudUrl))
+    {
+    case kErrorNone:
+        ProcessMUDUrl(childMudUrl, child);
+        break;
+    case kErrorNotFound:
+        break;
+    default:
+        ExitNow(error = kErrorParse);
+    }
+#endif
 
     switch (aRxInfo.mMessage.ReadLeaderDataTlv(leaderData))
     {
