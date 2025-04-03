@@ -2087,9 +2087,9 @@ Error Mle::SendChildUpdateRequest(ChildUpdateRequestMode aMode)
     if (!IsFullThreadDevice())
     {
         SuccessOrExit(error = message->AppendAddressRegistrationTlv(addrRegMode));
-// #if CONFIG_OPENTHREAD_MUD
-//         SuccessOrExit(error = message->AppendMudUrlTlv());
-// #endif
+#if CONFIG_OPENTHREAD_MUD
+        SuccessOrExit(error = message->AppendMudUrlTlv());
+#endif
     }
 
     destination.SetToLinkLocalAddress(mParent.GetExtAddress());
