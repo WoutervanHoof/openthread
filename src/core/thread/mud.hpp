@@ -40,7 +40,8 @@
 #include "common/non_copyable.hpp"
 #include "common/string.hpp"
 #include "thread/mud_tlvs.hpp"
-#include "instance/instance.hpp"
+#include "net/ip6.hpp"
+#include "net/udp6.hpp"
 
 namespace ot {
 

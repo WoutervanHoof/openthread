@@ -37,6 +37,8 @@
 #include "common/message.hpp"
 #include "openthread/server.h"
 #include "thread/mud_tlvs.hpp"
+#include "thread/network_data.hpp"
+#include "thread/network_data_leader.hpp"
 
 namespace ot {
 
