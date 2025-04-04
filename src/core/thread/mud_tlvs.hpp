@@ -42,6 +42,7 @@ namespace ot
 {
 namespace Mud
 {
+static constexpr uint8_t kMaxMudUrlLength = 40;
 
 #if OPENTHREAD_FTD
 enum Type : uint8_t
@@ -50,7 +51,6 @@ enum Type : uint8_t
     kMucChildIP = OT_MUD_FORWARD_TLV_DEVICE_IP,
 };
 
-static constexpr uint8_t kMaxMudUrlLength = 40;
 
 typedef StringTlvInfo<kMudUrl, kMaxMudUrlLength> MudUrlForwarderTlv;
 
