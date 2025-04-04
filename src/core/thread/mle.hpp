@@ -1104,7 +1104,7 @@ private:
 #if OPENTHREAD_FTD
         Error ReadRouteTlv(RouteTlv &aRouteTlv) const;
 #if CONFIG_OPENTHREAD_MUD
-        Error ReadMudUrlTlv(String<Mud::Mud::kMaxMudUrlLength> &aMudUrl);
+        Error ReadMudUrlTlv(String<Mud::kMaxMudUrlLength> &aMudUrl);
 #endif
 #endif
 

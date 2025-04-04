@@ -5055,10 +5055,10 @@ exit:
 
 #if OPENTHREAD_FTD
 #if CONFIG_OPENTHREAD_MUD
-Error Mle::RxMessage::ReadMudUrlTlv(String<Mud::Mud::kMaxMudUrlLength> &aMudUrl)
+Error Mle::RxMessage::ReadMudUrlTlv(String<Mud::kMaxMudUrlLength> &aMudUrl)
 {
     Error   error;
-    char    mudUrlBuffer[Mud::Mud::kMaxMudUrlLength + 1];
+    char    mudUrlBuffer[Mud::kMaxMudUrlLength + 1];
 
     SuccessOrExit(error = Tlv::Find<MudUrlTlv>(*this, mudUrlBuffer));
     aMudUrl.Append(mudUrlBuffer);

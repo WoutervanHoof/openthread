@@ -62,7 +62,6 @@ class Mud : public InstanceLocator, private NonCopyable
 {    
 public:
     explicit Mud(Instance &aInstance);
-    static constexpr uint8_t kMaxMudUrlLength       =   40;
     static constexpr uint16_t kServiceNameMaxLength =   20;
     static constexpr uint16_t kMUDForwarderPort     = 1234;
     static constexpr uint8_t  kOmrPrefixLength      =   64;

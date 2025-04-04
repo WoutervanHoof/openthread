@@ -56,7 +56,7 @@ Mud::Mud(Instance &aInstance)
     }
 }
 
-Error Mud::ProcessMudUrl(String<Mud::Mud::kMaxMudUrlLength> aMUDUrl, const Child *newChild) {
+Error Mud::ProcessMudUrl(String<kMaxMudUrlLength> aMUDUrl, const Child *newChild) {
     Error                   error           = kErrorNone;
     Child::AddressIterator  addressIterator = Child::kAddressIteratorInit;
     Message                *MUDmessage      = nullptr;
