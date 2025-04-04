@@ -59,9 +59,6 @@
 #include "thread/thread_netif.hpp"
 #include "thread/time_sync_service.hpp"
 #include "thread/version.hpp"
-// #if CONFIG_OPENTHREAD_MUD
-// #include "common/string.hpp"
-// #endif
 
 namespace ot {
 namespace Mle {
@@ -1695,10 +1692,6 @@ void Mle::SendParentRequest(ParentRequestType aType)
     SuccessOrExit(error = message->AppendTimeRequestTlv());
 #endif
 
-#if CONFIG_OPENTHREAD_MUD
-    SuccessOrExit(error = message->AppendMudUrlTlv());
-#endif
-
     destination.SetToLinkLocalAllRoutersMulticast();
     SuccessOrExit(error = message->SendTo(destination));
 
@@ -1785,10 +1778,6 @@ Error Mle::SendChildIdRequest(void)
     SuccessOrExit(error = message->AppendTimeoutTlv(mTimeout));
     SuccessOrExit(error = message->AppendVersionTlv());
     SuccessOrExit(error = message->AppendSupervisionIntervalTlv(Get<SupervisionListener>().GetInterval()));
-
-// #if CONFIG_OPENTHREAD_MUD
-//     SuccessOrExit(error = message->AppendMudUrlTlv());
-// #endif
 
     if (!IsFullThreadDevice())
     {
@@ -4556,8 +4545,7 @@ Error Mle::TxMessage::AppendVersionTlv(void) { return Tlv::Append<VersionTlv>(*t
 
 #if CONFIG_OPENTHREAD_MUD
 Error Mle::TxMessage::AppendMudUrlTlv(void) { 
-    const char * mudUrl = CONFIG_OPENTHREAD_MUD_URL;
-    return Tlv::Append<MudUrlTlv>(*this, mudUrl); }
+    return Tlv::Append<MudUrlTlv>(*this, Mud::Mud::kMudUrl); }
 #endif
 
 Error Mle::TxMessage::AppendAddressRegistrationTlv(AddressRegistrationMode aMode)
@@ -5067,10 +5055,10 @@ exit:
 
 #if OPENTHREAD_FTD
 #if CONFIG_OPENTHREAD_MUD
-Error Mle::RxMessage::ReadMudUrlTlv(String<Tlv::kMaxMudUrlLength> &aMudUrl)
+Error Mle::RxMessage::ReadMudUrlTlv(String<Mud::Mud::kMaxMudUrlLength> &aMudUrl)
 {
     Error   error;
-    char    mudUrlBuffer[Tlv::kMaxMudUrlLength+1];
+    char    mudUrlBuffer[Mud::Mud::kMaxMudUrlLength + 1];
 
     SuccessOrExit(error = Tlv::Find<MudUrlTlv>(*this, mudUrlBuffer));
     aMudUrl.Append(mudUrlBuffer);

@@ -44,6 +44,9 @@
 #include "net/ip6_address.hpp"
 #include "thread/link_metrics_tlvs.hpp"
 #include "thread/mle_types.hpp"
+#if CONFIG_OPENTHREAD_MUD
+#include "thread/mud.hpp"
+#endif
 
 namespace ot {
 
@@ -121,8 +124,6 @@ public:
 
         kInvalid = 255,
     };
-
-    static constexpr u_int8_t kMaxMudUrlLength  = 40; ///< Max length of MUD URL TLV.
 
     /**
      * Returns the Type value.
@@ -214,11 +215,13 @@ typedef UintTlvInfo<Tlv::kLinkMargin, uint8_t> LinkMarginTlv;
  */
 typedef UintTlvInfo<Tlv::kVersion, uint16_t> VersionTlv;
 
+#if CONFIG_OPENTHREAD_MUD
 /**
  * This class defines MUD URL TLV constants and types.
  *
  */
-typedef StringTlvInfo<Tlv::kMudUrl, Tlv::kMaxMudUrlLength> MudUrlTlv;
+typedef StringTlvInfo<Tlv::kMudUrl, Mud::Mud::kMaxMudUrlLength> MudUrlTlv;
+#endif
 
 /**
  * Defines PAN ID TLV constants and types.

@@ -58,6 +58,7 @@
 #include "thread/network_data_types.hpp"
 #include "thread/router.hpp"
 #if CONFIG_OPENTHREAD_MUD
+#include "thread/mud.hpp"
 #include "common/string.hpp"
 #endif
 
@@ -1040,7 +1041,6 @@ private:
         Error AppendVersionTlv(void);
 #if CONFIG_OPENTHREAD_MUD
         Error AppendMudUrlTlv(void);
-        // String<Tlv::kMaxMudUrlLength> mMudUrl;
 #endif
         Error AppendAddressRegistrationTlv(AddressRegistrationMode aMode = kAppendAllAddresses);
         Error AppendSupervisionIntervalTlv(uint16_t aInterval);
@@ -1104,7 +1104,7 @@ private:
 #if OPENTHREAD_FTD
         Error ReadRouteTlv(RouteTlv &aRouteTlv) const;
 #if CONFIG_OPENTHREAD_MUD
-        Error ReadMudUrlTlv(String<Tlv::kMaxMudUrlLength> &aMudUrl);
+        Error ReadMudUrlTlv(String<Mud::Mud::kMaxMudUrlLength> &aMudUrl);
 #endif
 #endif
 

@@ -116,6 +116,9 @@
 #include "thread/mle.hpp"
 #include "thread/mle_router.hpp"
 #include "thread/mlr_manager.hpp"
+#if CONFIG_OPENTHREAD_MUD
+#include "thread/mud.hpp"
+#endif
 #include "thread/network_data_local.hpp"
 #include "thread/network_data_notifier.hpp"
 #include "thread/network_data_publisher.hpp"
@@ -707,6 +710,10 @@ private:
     Nat64::Translator mNat64Translator;
 #endif
 
+#if CONFIG_OPENTHREAD_MUD
+    Mud::Mud mMud;
+#endif
+
 #endif // OPENTHREAD_MTD || OPENTHREAD_FTD
 
 #if OPENTHREAD_RADIO || OPENTHREAD_CONFIG_LINK_RAW_ENABLE
@@ -1076,6 +1083,10 @@ template <> inline Srp::AdvertisingProxy &Instance::Get(void) { return mSrpAdver
 
 #if OPENTHREAD_CONFIG_BLE_TCAT_ENABLE
 template <> inline Ble::BleSecure &Instance::Get(void) { return mApplicationBleSecure; }
+#endif
+
+#if CONFIG_OPENTHREAD_MUD
+template <> inline Mud::Mud &Instance::Get(void) { return mMud; }
 #endif
 
 #endif // OPENTHREAD_MTD || OPENTHREAD_FTD
