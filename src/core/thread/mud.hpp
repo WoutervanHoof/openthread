@@ -65,16 +65,18 @@ public:
 
     static constexpr uint16_t kServiceNameMaxLength =   20;
     static constexpr uint16_t kMUDForwarderPort     = 1234;
-    static constexpr char kMudUrl[kMaxMudUrlLength] = CONFIG_OPENTHREAD_MUD_URL;
     
-    #if OPENTHREAD_FTD
+    ot::String<kMaxMudUrlLength> mMudUrl;
+#if OPENTHREAD_FTD
+    Error ProcessMudUrl(String<kMaxMudUrlLength> aMUDUrl, Ip6::Address &newChildAddress);
+#endif
+    
+private:
+#if OPENTHREAD_FTD
     Ip6::Udp::Socket          mMudSocket;
     
-    Error ProcessMudUrl(String<kMaxMudUrlLength> aMUDUrl, Ip6::Address &newChildAddress);
-    
-    private:    
     Error FindMudForwarderIp(Ip6::Address &serverAddress);
-    #endif // OPENTHREAD_FTD
+#endif // OPENTHREAD_FTD
 };
 
 }

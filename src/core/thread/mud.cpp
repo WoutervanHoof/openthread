@@ -55,6 +55,8 @@ MudProcessor::MudProcessor(Instance &aInstance)
         LogWarn("failed to open MUD socket on MLE router");
     }
 #endif
+    mMudUrl.Clear();
+    mMudUrl.Append(CONFIG_OPENTHREAD_MUD_URL);
 }
 
 #if OPENTHREAD_FTD

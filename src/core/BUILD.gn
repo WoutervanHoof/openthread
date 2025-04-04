@@ -669,6 +669,8 @@ openthread_core_files = [
   "thread/mlr_manager.hpp",
   "thread/mlr_types.hpp",
   "thread/mud_tlvs.hpp",
+  "thread/mud.cpp",
+  "thread/mud.hpp",
   "thread/neighbor.cpp",
   "thread/neighbor.hpp",
   "thread/neighbor_table.cpp",
