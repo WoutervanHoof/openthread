@@ -65,6 +65,7 @@ public:
 
     static constexpr uint16_t kServiceNameMaxLength =   20;
     static constexpr uint16_t kMUDForwarderPort     = 1234;
+    static constexpr char kMudUrl[kMaxMudUrlLength] = CONFIG_OPENTHREAD_MUD_URL;
     
     #if OPENTHREAD_FTD
     Ip6::Udp::Socket          mMudSocket;
@@ -76,7 +77,6 @@ public:
     #endif // OPENTHREAD_FTD
 };
 
-static constexpr char kMudUrl[kMaxMudUrlLength] = CONFIG_OPENTHREAD_MUD_URL;
 }
  
 }
