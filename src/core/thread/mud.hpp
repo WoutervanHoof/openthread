@@ -34,10 +34,13 @@
 #ifndef MUD_HPP_
 #define MUD_HPP_
 
+#include "openthread-core-config.h"
+
 #include "common/locator.hpp"
 #include "common/non_copyable.hpp"
 #include "common/string.hpp"
 #include "thread/mud_tlvs.hpp"
+#include "instance/instance.hpp"
 
 namespace ot {
 

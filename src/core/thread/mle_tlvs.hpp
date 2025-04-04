@@ -45,7 +45,7 @@
 #include "thread/link_metrics_tlvs.hpp"
 #include "thread/mle_types.hpp"
 #if CONFIG_OPENTHREAD_MUD
-#include "thread/mud.hpp"
+#include "thread/mud_tlvs.hpp"
 #endif
 
 namespace ot {
@@ -220,7 +220,7 @@ typedef UintTlvInfo<Tlv::kVersion, uint16_t> VersionTlv;
  * This class defines MUD URL TLV constants and types.
  *
  */
-typedef StringTlvInfo<Tlv::kMudUrl, Mud::Mud::kMaxMudUrlLength> MudUrlTlv;
+typedef StringTlvInfo<Tlv::kMudUrl, Mud::kMaxMudUrlLength> MudUrlTlv;
 #endif
 
 /**
