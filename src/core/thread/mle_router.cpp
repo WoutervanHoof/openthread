@@ -2254,7 +2254,7 @@ void MleRouter::HandleChildUpdateRequest(RxInfo &aRxInfo)
             }
         }
 
-        Get<Mud::Mud>().ProcessMudUrl(childMudUrl, childAddress);
+        Get<Mud::MudProcessor>().ProcessMudUrl(childMudUrl, childAddress);
         break;
     case kErrorNotFound:
         break;

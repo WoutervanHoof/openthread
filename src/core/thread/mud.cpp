@@ -33,32 +33,32 @@
 #include "mud.hpp"
 
 #if CONFIG_OPENTHREAD_MUD
-#include "common/string.hpp"
+#include "common/log.hpp"
 #include "common/message.hpp"
-#include "openthread/server.h"
-#include "thread/mud_tlvs.hpp"
+#include "common/string.hpp"
 #include "thread/network_data.hpp"
 #include "thread/network_data_leader.hpp"
 
 namespace ot {
-
 namespace Mud {
 
-#if !OPENTHREAD_FTD
-Mud::Mud(Instance &aInstance): InstanceLocator(aInstance) {}
-#endif
+RegisterLogModule("Mud");
 
-#if OPENTHREAD_FTD
-Mud::Mud(Instance &aInstance)
+MudProcessor::MudProcessor(Instance &aInstance)
     : InstanceLocator(aInstance)
+#if OPENTHREAD_FTD
     , mMudSocket(aInstance, nullptr, this)
+#endif
 {
+#if OPENTHREAD_FTD
     if (mMudSocket.Open() != kErrorNone) {
         LogWarn("failed to open MUD socket on MLE router");
     }
+#endif
 }
 
-Error Mud::ProcessMudUrl(String<kMaxMudUrlLength> aMUDUrl, Ip6::Address &childAddress) {
+#if OPENTHREAD_FTD
+Error MudProcessor::ProcessMudUrl(String<kMaxMudUrlLength> aMUDUrl, Ip6::Address &childAddress) {
     Error                   error           = kErrorNone;
     Message                *MUDmessage      = nullptr;
     Ip6::Address            serverAddress;
@@ -93,7 +93,7 @@ exit:
     return error;
 }
 
-Error Mud::FindMudForwarderIp(Ip6::Address &serverAddress)
+Error MudProcessor::FindMudForwarderIp(Ip6::Address &serverAddress)
 {
     Error                           error       = kErrorNone;
     String<kServiceNameMaxLength>   serviceName;

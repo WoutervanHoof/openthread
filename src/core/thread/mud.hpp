@@ -40,8 +40,10 @@
 #include "common/non_copyable.hpp"
 #include "common/string.hpp"
 #include "thread/mud_tlvs.hpp"
+#if CONFIG_OPENTHREAD_MUD
 #include "net/ip6.hpp"
 #include "net/udp6.hpp"
+#endif
 
 namespace ot {
 
@@ -53,28 +55,28 @@ namespace ot {
  */
 namespace Mud {
 
-
 /**
  * Implements MUD functionality required by all Thread devices.
  */
-class Mud : public InstanceLocator, private NonCopyable
+class MudProcessor : public InstanceLocator, private NonCopyable
 {    
 public:
-    explicit Mud(Instance &aInstance);
+    explicit MudProcessor(Instance &aInstance);
+
     static constexpr uint16_t kServiceNameMaxLength =   20;
     static constexpr uint16_t kMUDForwarderPort     = 1234;
-    static constexpr char     kMudUrl[kMaxMudUrlLength] = CONFIG_OPENTHREAD_MUD_URL;
     
-#if OPENTHREAD_FTD
+    #if OPENTHREAD_FTD
     Ip6::Udp::Socket          mMudSocket;
-
+    
     Error ProcessMudUrl(String<kMaxMudUrlLength> aMUDUrl, Ip6::Address &newChildAddress);
-
-private:    
+    
+    private:    
     Error FindMudForwarderIp(Ip6::Address &serverAddress);
-#endif // OPENTHREAD_FTD
+    #endif // OPENTHREAD_FTD
 };
 
+static constexpr char kMudUrl[kMaxMudUrlLength] = CONFIG_OPENTHREAD_MUD_URL;
 }
  
 }

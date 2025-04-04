@@ -4545,7 +4545,7 @@ Error Mle::TxMessage::AppendVersionTlv(void) { return Tlv::Append<VersionTlv>(*t
 
 #if CONFIG_OPENTHREAD_MUD
 Error Mle::TxMessage::AppendMudUrlTlv(void) { 
-    return Tlv::Append<MudUrlTlv>(*this, Mud::Mud::kMudUrl); }
+    return Tlv::Append<MudUrlTlv>(*this, Mud::kMudUrl); }
 #endif
 
 Error Mle::TxMessage::AppendAddressRegistrationTlv(AddressRegistrationMode aMode)

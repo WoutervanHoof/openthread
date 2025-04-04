@@ -711,7 +711,7 @@ private:
 #endif
 
 #if CONFIG_OPENTHREAD_MUD
-    Mud::Mud mMud;
+    Mud::MudProcessor mMud;
 #endif
 
 #endif // OPENTHREAD_MTD || OPENTHREAD_FTD
@@ -1086,7 +1086,7 @@ template <> inline Ble::BleSecure &Instance::Get(void) { return mApplicationBleS
 #endif
 
 #if CONFIG_OPENTHREAD_MUD
-template <> inline Mud::Mud &Instance::Get(void) { return mMud; }
+template <> inline Mud::MudProcessor &Instance::Get(void) { return mMud; }
 #endif
 
 #endif // OPENTHREAD_MTD || OPENTHREAD_FTD

@@ -225,6 +225,7 @@ set(COMMON_SOURCES
     thread/mle_tlvs.cpp
     thread/mle_types.cpp
     thread/mlr_manager.cpp
+    thread/mud.cpp
     thread/neighbor.cpp
     thread/neighbor_table.cpp
     thread/network_data.cpp
