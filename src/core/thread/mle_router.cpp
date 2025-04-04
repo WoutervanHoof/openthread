@@ -2167,7 +2167,9 @@ void MleRouter::HandleChildUpdateRequest(RxInfo &aRxInfo)
     TlvList         tlvList;
     bool            childDidChange = false;
 #if CONFIG_OPENTHREAD_MUD
-    String<Mud::Mud::kMaxMudUrlLength> childMudUrl;
+    String<Mud::kMaxMudUrlLength> childMudUrl;
+    Child::AddressIterator addressIterator = Child::kAddressIteratorInit;
+    Ip6::Address           childAddress;
 #endif
 
     Log(kMessageReceive, kTypeChildUpdateRequestOfChild, aRxInfo.mMessageInfo.GetPeerAddr());
@@ -2241,7 +2243,18 @@ void MleRouter::HandleChildUpdateRequest(RxInfo &aRxInfo)
     switch (aRxInfo.mMessage.ReadMudUrlTlv(childMudUrl))
     {
     case kErrorNone:
-        Get<Mud::Mud>().ProcessMudUrl(childMudUrl, child);
+        childAddress.Clear();
+
+        while (child->GetNextIp6Address(addressIterator, childAddress) == kErrorNone)
+        {
+            LogInfo("found child address: %s", childAddress.ToString().AsCString());
+            if (MatchesOmrPrefix(childAddress)) {
+                LogInfo("found child omr-address %s", childAddress.ToString().AsCString());
+                break;
+            }
+        }
+
+        Get<Mud::Mud>().ProcessMudUrl(childMudUrl, childAddress);
         break;
     case kErrorNotFound:
         break;
@@ -2385,6 +2398,34 @@ exit:
     LogProcessError(kTypeChildUpdateRequestOfChild, error);
 }
 
+#if CONFIG_OPENTHREAD_MUD
+bool MleRouter::MatchesOmrPrefix(Ip6::Address aAddress)
+{
+    NetworkData::Iterator           iterator = NetworkData::kIteratorInit;
+    NetworkData::OnMeshPrefixConfig prefixConfig;
+
+    while (Get<NetworkData::Leader>().GetNextOnMeshPrefix(iterator, prefixConfig) == kErrorNone)
+    {
+        if (IsOmrPrefix(prefixConfig) && aAddress.MatchesPrefix(prefixConfig.GetPrefix())) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool MleRouter::IsOmrPrefix(const NetworkData::OnMeshPrefixConfig &aPrefixConfig)
+{
+    // By spec: OMR prefix is identifiable with stable, on mesh, preferred, and SLAAC all true
+    // For some reason, BorderRouter::RoutingManager::IsValidOmrPrefix does not check if mPreferred is true.
+    return IsValidOmrPrefix(aPrefixConfig.GetPrefix()) && aPrefixConfig.mOnMesh && aPrefixConfig.mSlaac && aPrefixConfig.mStable && aPrefixConfig.mPreferred; 
+}
+
+bool MleRouter::IsValidOmrPrefix(const Ip6::Prefix &aPrefix)
+{
+    return (aPrefix.GetLength() == kOmrPrefixLength) && !aPrefix.IsLinkLocal() && !aPrefix.IsMulticast();
+}
+#endif
 void MleRouter::HandleChildUpdateResponse(RxInfo &aRxInfo)
 {
     Error       error = kErrorNone;

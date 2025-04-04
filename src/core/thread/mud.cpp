@@ -56,14 +56,11 @@ Mud::Mud(Instance &aInstance)
     }
 }
 
-Error Mud::ProcessMudUrl(String<kMaxMudUrlLength> aMUDUrl, const Child *newChild) {
+Error Mud::ProcessMudUrl(String<kMaxMudUrlLength> aMUDUrl, Ip6::Address &childAddress) {
     Error                   error           = kErrorNone;
-    Child::AddressIterator  addressIterator = Child::kAddressIteratorInit;
     Message                *MUDmessage      = nullptr;
-    Ip6::Address            childAddress;
     Ip6::Address            serverAddress;
     Ip6::MessageInfo        messageInfo;
-    childAddress.Clear();
 
     if (!mMudSocket.IsOpen()) {
         ExitNow(error = kErrorInvalidState);
@@ -74,15 +71,6 @@ Error Mud::ProcessMudUrl(String<kMaxMudUrlLength> aMUDUrl, const Child *newChild
 
     // Send UDP message with mudUrl and child external IP address to serveripaddress
     MUDmessage = mMudSocket.NewMessage();
-
-    while (newChild->GetNextIp6Address(addressIterator, childAddress) == kErrorNone)
-    {
-        LogInfo("found child address: %s", childAddress.ToString().AsCString());
-        if (MatchesOmrPrefix(childAddress)) {
-            LogInfo("found child omr-address %s", childAddress.ToString().AsCString());
-            SuccessOrExit(error = MUDmessage->AppendBytes(childAddress.ToString().AsCString(), childAddress.ToString().GetLength() + 1));
-        }
-    }
 
     SuccessOrExit(error = Tlv::Append<MudUrlForwarderTlv>(*MUDmessage, aMUDUrl.AsCString()));
     SuccessOrExit(error = Tlv::Append<ChildIpTlv>(*MUDmessage, childAddress.ToString().AsCString()));
@@ -137,33 +125,6 @@ Error Mud::FindMudForwarderIp(Ip6::Address &serverAddress)
 
 exit:
     return error;
-}
-
-bool Mud::MatchesOmrPrefix(Ip6::Address aAddress)
-{
-    NetworkData::Iterator           iterator = NetworkData::kIteratorInit;
-    NetworkData::OnMeshPrefixConfig prefixConfig;
-
-    while (Get<NetworkData::Leader>().GetNextOnMeshPrefix(iterator, prefixConfig) == kErrorNone)
-    {
-        if (IsOmrPrefix(prefixConfig) && aAddress.MatchesPrefix(prefixConfig.GetPrefix())) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-bool Mud::IsOmrPrefix(const NetworkData::OnMeshPrefixConfig &aPrefixConfig)
-{
-    // By spec: OMR prefix is identifiable with stable, on mesh, preferred, and SLAAC all true
-    // For some reason, BorderRouter::RoutingManager::IsValidOmrPrefix does not check if mPreferred is true.
-    return isValidOmrPrefix(aPrefixConfig.GetPrefix()) && aPrefixConfig.mOnMesh && aPrefixConfig.mSlaac && aPrefixConfig.mStable && aPrefixConfig.mPreferred; 
-}
-
-bool Mud::isValidOmrPrefix(const Ip6::Prefix &aPrefix)
-{
-    return (aPrefix.GetLength() == kOmrPrefixLength) && !aPrefix.IsLinkLocal() && !aPrefix.IsMulticast();
 }
 
 #endif // OPENTHREAD_FTD

@@ -37,12 +37,7 @@
 #include "common/locator.hpp"
 #include "common/non_copyable.hpp"
 #include "common/string.hpp"
-#include "instance/instance.hpp"
 #include "thread/mud_tlvs.hpp"
-#if OPENTHREAD_FTD
-#include "thread/mle_tlvs.hpp"
-#include "thread/child.hpp"
-#endif // OPENTHREAD_FTD
 
 namespace ot {
 
@@ -64,19 +59,15 @@ public:
     explicit Mud(Instance &aInstance);
     static constexpr uint16_t kServiceNameMaxLength =   20;
     static constexpr uint16_t kMUDForwarderPort     = 1234;
-    static constexpr uint8_t  kOmrPrefixLength      =   64;
     static constexpr char     kMudUrl[kMaxMudUrlLength] = CONFIG_OPENTHREAD_MUD_URL;
     
 #if OPENTHREAD_FTD
     Ip6::Udp::Socket          mMudSocket;
 
-    Error ProcessMudUrl(String<kMaxMudUrlLength> aMUDUrl, const Child *newChild);
+    Error ProcessMudUrl(String<kMaxMudUrlLength> aMUDUrl, Ip6::Address &newChildAddress);
 
 private:    
     Error FindMudForwarderIp(Ip6::Address &serverAddress);
-    bool MatchesOmrPrefix(Ip6::Address aChildAddress);
-    bool IsOmrPrefix(const NetworkData::OnMeshPrefixConfig &aPrefixConfig);
-    bool isValidOmrPrefix(const Ip6::Prefix &aPrefix);
 #endif // OPENTHREAD_FTD
 };
 
