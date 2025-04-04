@@ -40,45 +40,19 @@
 
 namespace ot
 {
-namespace Mud 
+namespace Mud
 {
-
-class MudTlv;
 
 #if OPENTHREAD_FTD
-
-OT_TOOL_PACKED_BEGIN
-class MudTlv : public ot::Tlv
+enum Type : uint8_t
 {
-public:
-    enum Type : uint8_t
-    {
-        kMudUrl     = OT_MUD_FORWARD_TLV_MUD_URL,
-        kMucChildIP = OT_MUD_FORWARD_TLV_DEVICE_IP,
-    };
+    kMudUrl     = OT_MUD_FORWARD_TLV_MUD_URL,
+    kMucChildIP = OT_MUD_FORWARD_TLV_DEVICE_IP,
+};
 
-    static constexpr u_int8_t kMaxMudUrlLength = 40; ///< Max length of a MUD URL Tlv
+typedef StringTlvInfo<kMudUrl, kMaxMudUrlLength> MudUrlForwarderTlv;
 
-    /**
-     * Returns the Type value.
-     *
-     * @returns The Type value.
-     *
-     */
-    Type GetType(void) const { return static_cast<Type>(ot::Tlv::GetType()); }
-
-    /**
-     * Sets the Type value.
-     *
-     * @param[in]  aType  The Type value.
-     *
-     */
-    void SetType(Type aType) { ot::Tlv::SetType(static_cast<uint8_t>(aType)); }
-} OT_TOOL_PACKED_END;
-
-typedef StringTlvInfo<MudTlv::kMudUrl, MudTlv::kMaxMudUrlLength> MudUrlForwarderTlv;
-
-typedef StringTlvInfo<MudTlv::kMucChildIP, MudTlv::kMaxMudUrlLength> ChildIpTlv;
+typedef StringTlvInfo<kMucChildIP, kMaxMudUrlLength> ChildIpTlv;
 
 #endif // OPENTHREAD_FTD
 

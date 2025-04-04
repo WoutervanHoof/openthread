@@ -39,7 +39,10 @@
 #include "common/string.hpp"
 #include "instance/instance.hpp"
 #include "thread/mud_tlvs.hpp"
+#if OPENTHREAD_FTD
+#include "thread/mle_tlvs.hpp"
 #include "thread/child.hpp"
+#endif // OPENTHREAD_FTD
 
 namespace ot {
 
@@ -75,7 +78,7 @@ private:
     bool MatchesOmrPrefix(Ip6::Address aChildAddress);
     bool IsOmrPrefix(const NetworkData::OnMeshPrefixConfig &aPrefixConfig);
     bool isValidOmrPrefix(const Ip6::Prefix &aPrefix);
-#endif // OPENTHRAD_FTD
+#endif // OPENTHREAD_FTD
 };
 
 }
