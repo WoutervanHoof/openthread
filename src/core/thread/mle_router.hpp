@@ -685,14 +685,6 @@ private:
     DeviceProperties mDeviceProperties;
 #endif
 
-#if CONFIG_OPENTHREAD_MUD
-    bool MatchesOmrPrefix(Ip6::Address aAddress);
-    bool IsOmrPrefix(const NetworkData::OnMeshPrefixConfig &aPrefixConfig);
-    bool IsValidOmrPrefix(const Ip6::Prefix &aPrefix);
-
-    static constexpr uint8_t  kOmrPrefixLength = 64;
-#endif
-
     ChildTable  mChildTable;
     RouterTable mRouterTable;
 

@@ -38,11 +38,10 @@
 
 #include "common/locator.hpp"
 #include "common/non_copyable.hpp"
+#include "common/notifier.hpp"
 #include "common/string.hpp"
-#if CONFIG_OPENTHREAD_MUD
 #include "net/ip6.hpp"
 #include "net/udp6.hpp"
-#endif
 #include "thread/mud_tlvs.hpp"
 
 namespace ot {
@@ -69,13 +68,19 @@ public:
     ot::String<kMaxMudUrlLength> mMudUrl;
 #if OPENTHREAD_FTD
     Error ProcessMudUrl(String<kMaxMudUrlLength> aMUDUrl, Ip6::Address &newChildAddress);
+    bool MatchesOmrPrefix(Ip6::Address aAddress);
+    void HandleNotifierEvents(Events aEvents);
 #endif
     
 private:
 #if OPENTHREAD_FTD
+    static constexpr uint8_t  kOmrPrefixLength = 64;
     Ip6::Udp::Socket          mMudSocket;
     
+    void HandleNewIp6Address();
     Error FindMudForwarderIp(Ip6::Address &serverAddress);
+    bool IsOmrPrefix(const NetworkData::OnMeshPrefixConfig &aPrefixConfig);
+    bool IsValidOmrPrefix(const Ip6::Prefix &aPrefix);
 #endif // OPENTHREAD_FTD
 };
 

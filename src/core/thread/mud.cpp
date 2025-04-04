@@ -33,13 +33,16 @@
 #include "mud.hpp"
 
 #if CONFIG_OPENTHREAD_MUD
+
+#include "common/linked_list.hpp"
+#include "common/locator_getters.hpp"
 #include "common/log.hpp"
 #include "common/message.hpp"
 #include "common/string.hpp"
-#include "common/locator_getters.hpp"
 #include "instance/instance.hpp"
+#include "net/netif.hpp"
+#include "thread/thread_netif.hpp"
 #include "thread/network_data_leader.hpp"
-#include "openthread/server.h"
 
 namespace ot {
 namespace Mud {
@@ -63,10 +66,10 @@ MudProcessor::MudProcessor(Instance &aInstance)
 
 #if OPENTHREAD_FTD
 Error MudProcessor::ProcessMudUrl(String<kMaxMudUrlLength> aMUDUrl, Ip6::Address &childAddress) {
-    Error                   error           = kErrorNone;
-    Message                *MUDmessage      = nullptr;
-    Ip6::Address            serverAddress;
-    Ip6::MessageInfo        messageInfo;
+    Error            error          = kErrorNone;
+    Message         *MUDmessage     = nullptr;
+    Ip6::Address     serverAddress;
+    Ip6::MessageInfo messageInfo;
 
     if (!mMudSocket.IsOpen()) {
         ExitNow(error = kErrorInvalidState);
@@ -99,13 +102,13 @@ exit:
 
 Error MudProcessor::FindMudForwarderIp(Ip6::Address &serverAddress)
 {
-    Error                           error       = kErrorNone;
-    String<kServiceNameMaxLength>   serviceName;
-    NetworkData::Iterator           iterator    = NetworkData::kIteratorInit;
-    NetworkData::ServiceConfig      service;
-    NetworkData::ServiceData        serviceData;
-    NetworkData::ServerData         serverData;
-    uint8_t                         serverDataLength;
+    Error                         error       = kErrorNone;
+    String<kServiceNameMaxLength> serviceName;
+    NetworkData::Iterator         iterator    = NetworkData::kIteratorInit;
+    NetworkData::ServiceConfig    service;
+    NetworkData::ServiceData      serviceData;
+    NetworkData::ServerData       serverData;
+    uint8_t                       serverDataLength;
 
     // TODO change to identifier byte as other services
     serviceName.Append("MUD_Forwarder");
@@ -131,6 +134,55 @@ Error MudProcessor::FindMudForwarderIp(Ip6::Address &serverAddress)
 
 exit:
     return error;
+}
+
+bool MudProcessor::MatchesOmrPrefix(Ip6::Address aAddress)
+{
+    NetworkData::Iterator           iterator = NetworkData::kIteratorInit;
+    NetworkData::OnMeshPrefixConfig prefixConfig;
+    
+    while (Get<NetworkData::Leader>().GetNextOnMeshPrefix(iterator, prefixConfig) == kErrorNone)
+    {
+        if (IsOmrPrefix(prefixConfig) && aAddress.MatchesPrefix(prefixConfig.GetPrefix())) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool MudProcessor::IsOmrPrefix(const NetworkData::OnMeshPrefixConfig &aPrefixConfig)
+{
+    // By spec: OMR prefix is identifiable with stable, on mesh, preferred, and SLAAC all true
+    // For some reason, BorderRouter::RoutingManager::IsValidOmrPrefix does not check if mPreferred is true.
+    return IsValidOmrPrefix(aPrefixConfig.GetPrefix()) && aPrefixConfig.mOnMesh && aPrefixConfig.mSlaac && aPrefixConfig.mStable && aPrefixConfig.mPreferred; 
+}
+
+bool MudProcessor::IsValidOmrPrefix(const Ip6::Prefix &aPrefix)
+{
+    return (aPrefix.GetLength() == kOmrPrefixLength) && !aPrefix.IsLinkLocal() && !aPrefix.IsMulticast();
+}
+
+void MudProcessor::HandleNotifierEvents(Events aEvents)
+{
+    if (aEvents.Contains(kEventIp6AddressAdded)) {
+        HandleNewIp6Address();
+    }
+}
+
+void MudProcessor::HandleNewIp6Address() 
+{
+    LinkedList<Ip6::Netif::UnicastAddress> addresses;
+
+    addresses = Get<ThreadNetif>().GetUnicastAddresses();
+    for (Ip6::Netif::UnicastAddress &address : addresses)
+    {
+        // TODO: track already notified IP addresses to save some bandwidth
+        if (MatchesOmrPrefix(address.GetAddress())) {
+            LogInfo("processing newly added address %s", address.GetAddress().ToString().AsCString());
+            ProcessMudUrl(mMudUrl, address.GetAddress());
+        }
+    }
 }
 
 #endif // OPENTHREAD_FTD

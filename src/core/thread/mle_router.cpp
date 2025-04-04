@@ -2079,10 +2079,8 @@ void MleRouter::HandleChildIdRequest(RxInfo &aRxInfo)
 
     VerifyOrExit(tlvList.GetLength() <= Child::kMaxRequestTlvs, error = kErrorParse);
 
-    LogInfo("We first get here!");
     if (!mode.IsFullThreadDevice())
     {
-        LogInfo("WE GET HERE!");
         SuccessOrExit(error = ProcessAddressRegistrationTlv(aRxInfo, *child));
     }
 
@@ -2247,9 +2245,7 @@ void MleRouter::HandleChildUpdateRequest(RxInfo &aRxInfo)
 
         while (child->GetNextIp6Address(addressIterator, childAddress) == kErrorNone)
         {
-            LogInfo("found child address: %s", childAddress.ToString().AsCString());
-            if (MatchesOmrPrefix(childAddress)) {
-                LogInfo("found child omr-address %s", childAddress.ToString().AsCString());
+            if (Get<Mud::MudProcessor>().MatchesOmrPrefix(childAddress)) {
                 Get<Mud::MudProcessor>().ProcessMudUrl(childMudUrl, childAddress);
             }
         }
@@ -2397,34 +2393,6 @@ exit:
     LogProcessError(kTypeChildUpdateRequestOfChild, error);
 }
 
-#if CONFIG_OPENTHREAD_MUD
-bool MleRouter::MatchesOmrPrefix(Ip6::Address aAddress)
-{
-    NetworkData::Iterator           iterator = NetworkData::kIteratorInit;
-    NetworkData::OnMeshPrefixConfig prefixConfig;
-
-    while (Get<NetworkData::Leader>().GetNextOnMeshPrefix(iterator, prefixConfig) == kErrorNone)
-    {
-        if (IsOmrPrefix(prefixConfig) && aAddress.MatchesPrefix(prefixConfig.GetPrefix())) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-bool MleRouter::IsOmrPrefix(const NetworkData::OnMeshPrefixConfig &aPrefixConfig)
-{
-    // By spec: OMR prefix is identifiable with stable, on mesh, preferred, and SLAAC all true
-    // For some reason, BorderRouter::RoutingManager::IsValidOmrPrefix does not check if mPreferred is true.
-    return IsValidOmrPrefix(aPrefixConfig.GetPrefix()) && aPrefixConfig.mOnMesh && aPrefixConfig.mSlaac && aPrefixConfig.mStable && aPrefixConfig.mPreferred; 
-}
-
-bool MleRouter::IsValidOmrPrefix(const Ip6::Prefix &aPrefix)
-{
-    return (aPrefix.GetLength() == kOmrPrefixLength) && !aPrefix.IsLinkLocal() && !aPrefix.IsMulticast();
-}
-#endif
 void MleRouter::HandleChildUpdateResponse(RxInfo &aRxInfo)
 {
     Error       error = kErrorNone;
