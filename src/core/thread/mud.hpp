@@ -39,11 +39,11 @@
 #include "common/locator.hpp"
 #include "common/non_copyable.hpp"
 #include "common/string.hpp"
-#include "thread/mud_tlvs.hpp"
 #if CONFIG_OPENTHREAD_MUD
 #include "net/ip6.hpp"
 #include "net/udp6.hpp"
 #endif
+#include "thread/mud_tlvs.hpp"
 
 namespace ot {
 

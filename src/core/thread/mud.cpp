@@ -36,8 +36,10 @@
 #include "common/log.hpp"
 #include "common/message.hpp"
 #include "common/string.hpp"
-#include "thread/network_data.hpp"
+#include "common/locator_getters.hpp"
+#include "instance/instance.hpp"
 #include "thread/network_data_leader.hpp"
+#include "openthread/server.h"
 
 namespace ot {
 namespace Mud {

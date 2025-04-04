@@ -2250,11 +2250,10 @@ void MleRouter::HandleChildUpdateRequest(RxInfo &aRxInfo)
             LogInfo("found child address: %s", childAddress.ToString().AsCString());
             if (MatchesOmrPrefix(childAddress)) {
                 LogInfo("found child omr-address %s", childAddress.ToString().AsCString());
-                break;
+                Get<Mud::MudProcessor>().ProcessMudUrl(childMudUrl, childAddress);
             }
         }
 
-        Get<Mud::MudProcessor>().ProcessMudUrl(childMudUrl, childAddress);
         break;
     case kErrorNotFound:
         break;
