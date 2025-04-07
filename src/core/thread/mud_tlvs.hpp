@@ -37,6 +37,7 @@
 
 #include "openthread/mud.h"
 #include "common/tlvs.hpp"
+#include "net/ip6_address.hpp"
 
 namespace ot
 {
@@ -58,7 +59,7 @@ enum Type : uint8_t
 
 typedef StringTlvInfo<kMudUrl, kMaxMudUrlLength> MudUrlForwarderTlv;
 
-typedef StringTlvInfo<kMucChildIP, kMaxMudUrlLength> ChildIpTlv;
+typedef StringTlvInfo<kMucChildIP, Ip6::Address::kInfoStringSize> ChildIpTlv;
 
 #endif // OPENTHREAD_FTD
 
