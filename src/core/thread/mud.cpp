@@ -65,9 +65,9 @@ MudProcessor::MudProcessor(Instance &aInstance)
 }
 
 #if OPENTHREAD_FTD
-Error MudProcessor::ProcessMudUrl(String<kMaxMudUrlLength> aMUDUrl, Ip6::Address &childAddress) {
+Error MudProcessor::ProcessMudUrl(String<kMaxMudUrlLength> aMudUrl, Ip6::Address &aChildAddress) {
     Error            error          = kErrorNone;
-    Message         *MUDmessage     = nullptr;
+    Message         *mudMessage     = nullptr;
     Ip6::Address     serverAddress;
     Ip6::MessageInfo messageInfo;
 
@@ -79,22 +79,24 @@ Error MudProcessor::ProcessMudUrl(String<kMaxMudUrlLength> aMUDUrl, Ip6::Address
     LogInfo("found mud forwarder ip: %s", serverAddress.ToString().AsCString());
 
     // Send UDP message with mudUrl and child external IP address to serveripaddress
-    MUDmessage = mMudSocket.NewMessage();
+    mudMessage = mMudSocket.NewMessage();
 
-    SuccessOrExit(error = Tlv::Append<MudUrlForwarderTlv>(*MUDmessage, aMUDUrl.AsCString()));
-    SuccessOrExit(error = Tlv::Append<ChildIpTlv>(*MUDmessage, childAddress.ToString().AsCString()));
+    LogInfo("Adding MUD URL: %s", aMudUrl.AsCString());
+    LogInfo("Adding Child IP: %s", aChildAddress.ToString().AsCString());
+    SuccessOrExit(error = Tlv::Append<MudUrlForwarderTlv>(*mudMessage, aMudUrl.AsCString()));
+    SuccessOrExit(error = Tlv::Append<ChildIpTlv>(*mudMessage, aChildAddress.ToString().AsCString()));
     
     messageInfo.SetPeerPort(kMUDForwarderPort);
     messageInfo.SetPeerAddr(serverAddress);
 
-    SuccessOrExit(error = mMudSocket.SendTo(*MUDmessage, messageInfo));
+    SuccessOrExit(error = mMudSocket.SendTo(*mudMessage, messageInfo));
     LogInfo("MUD udp message is sent!");
-    MUDmessage = nullptr;
+    mudMessage = nullptr;
 
 exit:
-    if (MUDmessage != nullptr)
+    if (mudMessage != nullptr)
     {
-        MUDmessage->Free();
+        mudMessage->Free();
     }
 
     return error;

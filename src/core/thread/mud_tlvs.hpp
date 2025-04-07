@@ -42,7 +42,7 @@ namespace ot
 {
 namespace Mud
 {
-static constexpr uint8_t kMaxMudUrlLength = 40;
+static constexpr uint8_t kMaxMudUrlLength = 25;
 
 #if OPENTHREAD_FTD
 enum Type : uint8_t

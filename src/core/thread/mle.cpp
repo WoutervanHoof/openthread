@@ -1755,6 +1755,8 @@ Error Mle::SendChildIdRequest(void)
     TxMessage   *message = nullptr;
     Ip6::Address destination;
 
+    LogInfo("we about to send chidl id req");
+
     if (mParent.GetExtAddress() == mParentCandidate.GetExtAddress())
     {
         if (IsChild())
@@ -1778,6 +1780,11 @@ Error Mle::SendChildIdRequest(void)
     }
 
     VerifyOrExit((message = NewMleMessage(kCommandChildIdRequest)) != nullptr, error = kErrorNoBufs);
+    #if CONFIG_OPENTHREAD_MUD
+            LogInfo("We get here, appending MUD URL");
+            SuccessOrExit(error = message->AppendMudUrlTlv());
+            LogInfo("Succesfully appended MUD URL");
+    #endif
     SuccessOrExit(error = message->AppendResponseTlv(mParentCandidate.mRxChallenge));
     SuccessOrExit(error = message->AppendLinkAndMleFrameCounterTlvs());
     SuccessOrExit(error = message->AppendModeTlv(mDeviceMode));
@@ -1792,11 +1799,6 @@ Error Mle::SendChildIdRequest(void)
         // No need to request the last Route64 TLV for MTD
         tlvsLen -= 1;
 
-#if CONFIG_OPENTHREAD_MUD
-        LogInfo("We get here, appending MUD URL");
-        SuccessOrExit(error = message->AppendMudUrlTlv());
-        LogInfo("Succesfully appended MUD URL");
-#endif
     }
 
     SuccessOrExit(error = message->AppendTlvRequestTlv(kTlvs, tlvsLen));
