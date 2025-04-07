@@ -1789,8 +1789,13 @@ Error Mle::SendChildIdRequest(void)
         tlvsLen -= 1;
         
 #if CONFIG_OPENTHREAD_MUD
-        LogInfo("Appended MUD URL in Child ID request");
-        SuccessOrExit(error = message->AppendMudUrlTlv());
+        // kAppendMeshLocalOnly is set if link layer security is enabled, because then the Child ID request must fit in one fragment
+        // See:: mesh_forwarder.cpp HandleFrameRequest lines 816 to 821
+        // Then, including the MUD URL will not work, but after a Child ID is granted, an MLE Update is sent with the MUD URL
+        if ( mAddressRegistrationMode != kAppendMeshLocalOnly) {
+            LogInfo("Appended MUD URL in Child ID request");
+            SuccessOrExit(error = message->AppendMudUrlTlv());
+        }
 #endif
     }
 
