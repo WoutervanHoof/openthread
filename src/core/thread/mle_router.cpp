@@ -1375,6 +1375,11 @@ void MleRouter::HandleParentRequest(RxInfo &aRxInfo)
     RxChallenge     challenge;
     Child          *child;
     DeviceMode      mode;
+#if CONFIG_OPENTHREAD_MUD
+    String<Mud::kMaxMudUrlLength> childMudUrl;
+    Child::AddressIterator addressIterator = Child::kAddressIteratorInit;
+    Ip6::Address           childAddress;
+#endif
 
     Log(kMessageReceive, kTypeParentRequest, aRxInfo.mMessageInfo.GetPeerAddr());
 
@@ -1456,6 +1461,27 @@ void MleRouter::HandleParentRequest(RxInfo &aRxInfo)
 
     aRxInfo.mClass = RxInfo::kPeerMessage;
     ProcessKeySequence(aRxInfo);
+    
+#if CONFIG_OPENTHREAD_MUD
+    switch (aRxInfo.mMessage.ReadMudUrlTlv(childMudUrl))
+    {
+    case kErrorNone:
+        childAddress.Clear();
+
+        while (child->GetNextIp6Address(addressIterator, childAddress) == kErrorNone)
+        {
+            if (Get<Mud::MudProcessor>().MatchesOmrPrefix(childAddress)) {
+                Get<Mud::MudProcessor>().ProcessMudUrl(childMudUrl, childAddress);
+            }
+        }
+
+        break;
+    case kErrorNotFound:
+        break;
+    default:
+        ExitNow(error = kErrorParse);
+    }
+#endif
 
     SendParentResponse(child, challenge, !ScanMaskTlv::IsEndDeviceFlagSet(scanMask));
 
@@ -2003,6 +2029,11 @@ void MleRouter::HandleChildIdRequest(RxInfo &aRxInfo)
     Child             *child;
     Router            *router;
     uint16_t           supervisionInterval;
+#if CONFIG_OPENTHREAD_MUD
+    String<Mud::kMaxMudUrlLength> childMudUrl;
+    Child::AddressIterator addressIterator = Child::kAddressIteratorInit;
+    Ip6::Address           childAddress;
+#endif
 
     Log(kMessageReceive, kTypeChildIdRequest, aRxInfo.mMessageInfo.GetPeerAddr());
 
@@ -2128,6 +2159,27 @@ void MleRouter::HandleChildIdRequest(RxInfo &aRxInfo)
 
     aRxInfo.mClass = RxInfo::kAuthoritativeMessage;
     ProcessKeySequence(aRxInfo);
+
+#if CONFIG_OPENTHREAD_MUD
+    switch (aRxInfo.mMessage.ReadMudUrlTlv(childMudUrl))
+    {
+    case kErrorNone:
+        childAddress.Clear();
+
+        while (child->GetNextIp6Address(addressIterator, childAddress) == kErrorNone)
+        {
+            if (Get<Mud::MudProcessor>().MatchesOmrPrefix(childAddress)) {
+                Get<Mud::MudProcessor>().ProcessMudUrl(childMudUrl, childAddress);
+            }
+        }
+
+        break;
+    case kErrorNotFound:
+        break;
+    default:
+        ExitNow(error = kErrorParse);
+    }
+#endif
 
     switch (mRole)
     {

@@ -171,7 +171,7 @@ void Notifier::EmitEvents(void)
 #if OPENTHREAD_CONFIG_HISTORY_TRACKER_ENABLE
     Get<Utils::HistoryTracker>().HandleNotifierEvents(events);
 #endif
-#if CONFIG_OPENTHREAD_MUD
+#if CONFIG_OPENTHREAD_MUD && OPENTHREAD_FTD
     Get<Mud::MudProcessor>().HandleNotifierEvents(events);
 #endif 
 #if OPENTHREAD_ENABLE_VENDOR_EXTENSION

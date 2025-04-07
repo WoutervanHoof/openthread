@@ -1688,6 +1688,12 @@ void Mle::SendParentRequest(ParentRequestType aType)
     SuccessOrExit(error = message->AppendScanMaskTlv(scanMask));
     SuccessOrExit(error = message->AppendVersionTlv());
 
+#if CONFIG_OPENTHREAD_MUD
+    LogInfo("We get here parent req, appending MUD URL");
+    SuccessOrExit(error = message->AppendMudUrlTlv());
+    LogInfo("Succesfully appended MUD URL to parent requ");
+#endif
+
 #if OPENTHREAD_CONFIG_TIME_SYNC_ENABLE
     SuccessOrExit(error = message->AppendTimeRequestTlv());
 #endif
@@ -1785,6 +1791,12 @@ Error Mle::SendChildIdRequest(void)
 
         // No need to request the last Route64 TLV for MTD
         tlvsLen -= 1;
+
+#if CONFIG_OPENTHREAD_MUD
+        LogInfo("We get here, appending MUD URL");
+        SuccessOrExit(error = message->AppendMudUrlTlv());
+        LogInfo("Succesfully appended MUD URL");
+#endif
     }
 
     SuccessOrExit(error = message->AppendTlvRequestTlv(kTlvs, tlvsLen));
