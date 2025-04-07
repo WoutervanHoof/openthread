@@ -42,7 +42,11 @@ namespace ot
 {
 namespace Mud
 {
-static constexpr uint8_t kMaxMudUrlLength = 25;
+// Increasing this value might lead to crashes when appending the MUD URL inside the MLE child ID request.
+// I think this happens because the message buffer is overwritten, but I have not figure out yet how that happens.
+// For value 40, it crashes, TODO: find root cause and fix
+// Actually, might be because for a longer mud url, the child id requres fragmentation, which fails.
+static constexpr uint8_t kMaxMudUrlLength = 20;
 
 #if OPENTHREAD_FTD
 enum Type : uint8_t

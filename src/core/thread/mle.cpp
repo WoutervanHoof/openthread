@@ -1688,12 +1688,6 @@ void Mle::SendParentRequest(ParentRequestType aType)
     SuccessOrExit(error = message->AppendScanMaskTlv(scanMask));
     SuccessOrExit(error = message->AppendVersionTlv());
 
-#if CONFIG_OPENTHREAD_MUD
-    LogInfo("We get here parent req, appending MUD URL");
-    SuccessOrExit(error = message->AppendMudUrlTlv());
-    LogInfo("Succesfully appended MUD URL to parent requ");
-#endif
-
 #if OPENTHREAD_CONFIG_TIME_SYNC_ENABLE
     SuccessOrExit(error = message->AppendTimeRequestTlv());
 #endif
@@ -1780,11 +1774,6 @@ Error Mle::SendChildIdRequest(void)
     }
 
     VerifyOrExit((message = NewMleMessage(kCommandChildIdRequest)) != nullptr, error = kErrorNoBufs);
-    #if CONFIG_OPENTHREAD_MUD
-            LogInfo("We get here, appending MUD URL");
-            SuccessOrExit(error = message->AppendMudUrlTlv());
-            LogInfo("Succesfully appended MUD URL");
-    #endif
     SuccessOrExit(error = message->AppendResponseTlv(mParentCandidate.mRxChallenge));
     SuccessOrExit(error = message->AppendLinkAndMleFrameCounterTlvs());
     SuccessOrExit(error = message->AppendModeTlv(mDeviceMode));
@@ -1798,7 +1787,11 @@ Error Mle::SendChildIdRequest(void)
 
         // No need to request the last Route64 TLV for MTD
         tlvsLen -= 1;
-
+        
+#if CONFIG_OPENTHREAD_MUD
+        LogInfo("Appended MUD URL in Child ID request");
+        SuccessOrExit(error = message->AppendMudUrlTlv());
+#endif
     }
 
     SuccessOrExit(error = message->AppendTlvRequestTlv(kTlvs, tlvsLen));
@@ -2091,6 +2084,7 @@ Error Mle::SendChildUpdateRequest(ChildUpdateRequestMode aMode)
     {
         SuccessOrExit(error = message->AppendAddressRegistrationTlv(addrRegMode));
 #if CONFIG_OPENTHREAD_MUD
+        LogInfo("Appending MUD URL in Child Update");
         SuccessOrExit(error = message->AppendMudUrlTlv());
 #endif
     }
@@ -5074,6 +5068,7 @@ Error Mle::RxMessage::ReadMudUrlTlv(String<Mud::kMaxMudUrlLength> &aMudUrl)
     Error   error;
     char    mudUrlBuffer[Mud::kMaxMudUrlLength + 1];
 
+    // TODO: potential safety issue, if malicous mudurl is provided, the Append call accepts a format string.
     SuccessOrExit(error = Tlv::Find<MudUrlTlv>(*this, mudUrlBuffer));
     aMudUrl.Append(mudUrlBuffer);
 
