@@ -5073,9 +5073,9 @@ Error Mle::RxMessage::ReadMudUrlTlv(String<Mud::kMaxMudUrlLength> &aMudUrl)
     Error   error;
     char    mudUrlBuffer[Mud::kMaxMudUrlLength + 1];
 
-    // TODO: potential safety issue, if malicous mudurl is provided, the Append call accepts a format string.
+    // TODO: potential safety issue, if malicous mudurl is provided.
     SuccessOrExit(error = Tlv::Find<MudUrlTlv>(*this, mudUrlBuffer));
-    aMudUrl.Append(mudUrlBuffer);
+    aMudUrl.Append("%s", mudUrlBuffer);
 
 exit:
     return error;
