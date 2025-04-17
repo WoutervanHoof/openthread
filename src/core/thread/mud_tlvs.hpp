@@ -43,11 +43,10 @@ namespace ot
 {
 namespace Mud
 {
-// Increasing this value might lead to crashes when appending the MUD URL inside the MLE child ID request.
-// I think this happens because the message buffer is overwritten, but I have not figure out yet how that happens.
-// For value 40, it crashes, TODO: find root cause and fix
-// Actually, might be because for a longer mud url, the child id requres fragmentation, which fails.
-static constexpr uint8_t kMaxMudUrlLength = 25;
+// Increasing this value might used to crash when appending the MUD URL inside the MLE child ID request.
+// This was, because for a longer mud url, the child id requires fragmentation, which is not allowed and we got stuck in a loop.
+// Now, if this is the case, the mud url will be appended to the MLE UPDATE message afterwards.
+static constexpr uint8_t kMaxMudUrlLength = 30;
 
 #if OPENTHREAD_FTD
 enum Type : uint8_t
