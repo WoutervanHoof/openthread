@@ -89,6 +89,7 @@ Error MudProcessor::ProcessMudUrl(String<kMaxMudUrlLength> aMudUrl, Ip6::Address
     messageInfo.SetPeerPort(kMUDForwarderPort);
     messageInfo.SetPeerAddr(serverAddress);
 
+    // Possible improvement: check for appropriate/default route in netdata
     SuccessOrExit(error = mMudSocket.SendTo(*mudMessage, messageInfo));
     LogInfo("MUD udp message is sent!");
     mudMessage = nullptr;
@@ -175,6 +176,7 @@ void MudProcessor::HandleNotifierEvents(Events aEvents)
 void MudProcessor::HandleNewIp6Address() 
 {
     LinkedList<Ip6::Netif::UnicastAddress> addresses;
+    Error error = kErrorNone;
 
     addresses = Get<ThreadNetif>().GetUnicastAddresses();
     for (Ip6::Netif::UnicastAddress &address : addresses)
@@ -182,7 +184,9 @@ void MudProcessor::HandleNewIp6Address()
         // TODO: track already notified IP addresses to save some bandwidth
         if (MatchesOmrPrefix(address.GetAddress())) {
             LogInfo("processing newly added address %s", address.GetAddress().ToString().AsCString());
-            ProcessMudUrl(mMudUrl, address.GetAddress());
+            error = ProcessMudUrl(mMudUrl, address.GetAddress());
+            LogWarnOnError(error, "failed to process MUD URL");
+            return;
         }
     }
 }

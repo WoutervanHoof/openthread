@@ -43,6 +43,9 @@ typedef enum otMudForwardMessageTlvType
 {
     OT_MUD_FORWARD_TLV_MUD_URL      = 0, // Newly joined Device MUD URL
     OT_MUD_FORWARD_TLV_DEVICE_IP    = 1, // Newly joined Device identifier/IP
+#if CONFIG_OPENTHREAD_MUD
+    OT_MUD_TEST                     = 2,    
+#endif
 } otMudForwardMessageTlvType;
 
 #ifdef __cplusplus
