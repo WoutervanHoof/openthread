@@ -62,6 +62,7 @@ MudProcessor::MudProcessor(Instance &aInstance)
 #endif
     mMudUrl.Clear();
     mMudUrl.Append(CONFIG_OPENTHREAD_MUD_URL);
+    LogInfo("Mud Processor initialized");
 }
 
 #if OPENTHREAD_FTD
@@ -169,6 +170,7 @@ bool MudProcessor::IsValidOmrPrefix(const Ip6::Prefix &aPrefix)
 void MudProcessor::HandleNotifierEvents(Events aEvents)
 {
     if (aEvents.Contains(kEventIp6AddressAdded)) {
+        LogInfo("notified of new IP6 Address");
         HandleNewIp6Address();
     }
 }
